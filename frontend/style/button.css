@@ -28,3 +28,15 @@
   gap: 0.5rem;
   font-size: 1rem;
 }
+
+.aside-link {
+  display: block;
+}
+
+.spacer-big {
+  margin-bottom: 40px;
+}
+
+.spacer-small {
+  margin-bottom: 15px;
+}

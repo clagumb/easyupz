@@ -1,36 +1,61 @@
 <!doctype html>
 <html lang="de">
-<head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UPZ in Bayern</title>
     <script src="js/main.js" defer></script>
-    <link rel="stylesheet" href="style/main.css"/>
-    <link rel="stylesheet" href="style/button.css"/>
-</head>
-<body>
-<header>
-    <div>
+    <link rel="stylesheet" href="style/main.css" />
+    <link rel="stylesheet" href="style/button.css" />
+  </head>
+  <body>
+    <header>
+      <div>
         🔷
-        <a href="index.html" class="start-link" tabindex="0" aria-current="page"
-        >Unterrichtspflichtzeit an beruflichen Schulen in Bayern</a
+        <a
+          href="index.html"
+          class="start-link"
+          tabindex="0"
+          aria-current="page"
         >
-    </div>
-    <div id="user-info">
+          Unterrichtspflichtzeit an beruflichen Schulen in Bayern
+        </a>
+      </div>
+      <div class="header-right">
         <a href="/login" class="start-link">Login</a>
-    </div>
-</header>
-<aside>
-    <a href="/" class="nav-button" tabindex="0" aria-current="page"
-    >Startseite</a
-    >
-</aside>
-<main>📄 Hauptinhalt</main>
-<footer>
-    © 2025 –
-    <a href="https://github.com/clagumb" target="_blank"
-    >GitHub: Claus Gumbmann</a
-    >
-</footer>
-</body>
+      </div>
+    </header>
+
+    <aside>
+      <div class="schuljahr-auswahl">
+        <label for="schuljahr">Schuljahr:</label>
+        <select id="schuljahr" name="schuljahr">
+          <option>2024/2025</option>
+          <option>2025/2026</option>
+        </select>
+      </div>
+
+      <div class="spacer-small">Unterrichtspflichtzeit</div>
+      <a href="#" class="aside-link">Gesamtübersicht</a>
+      <a href="#" class="aside-link">Einzelbetrachtung</a>
+      <a href="#" class="aside-link">Anrechnungen</a>
+      <a href="#" class="aside-link spacer-big">Ermäßigungen</a>
+
+      <div class="spacer-small">Administration</div>
+      <a href="#" class="aside-link">Lehrkräfte</a>
+      <a href="#" class="aside-link">Schuljahre</a>
+      <a href="#" class="aside-link">Anrechnungen</a>
+      <a href="#" class="aside-link">Ermäßigungen</a>
+      <a href="#" class="aside-link">Schulen</a>
+    </aside>
+
+    <main>📄 Hauptinhalt</main>
+
+    <footer>
+      © 2025 –
+      <a href="https://github.com/clagumb" target="_blank">
+        GitHub: Claus Gumbmann
+      </a>
+    </footer>
+  </body>
 </html>
