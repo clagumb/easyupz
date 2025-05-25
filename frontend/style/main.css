@@ -1,0 +1,68 @@
+:root {
+  --header-height: 60px;
+  --footer-height: 40px;
+  --sidebar-width: 200px;
+  --bg-header: #2c3e50;
+  --bg-sidebar: #ecf0f1;
+  --bg-content: #ffffff;
+  --bg-footer: #bdc3c7;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: var(--header-height) 1fr var(--footer-height);
+  grid-template-columns: var(--sidebar-width) 1fr;
+  grid-template-areas:
+    "header header"
+    "sidebar main"
+    "footer footer";
+}
+
+header {
+  grid-area: header;
+  background-color: var(--bg-header);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  font-size: 1.5rem;
+}
+
+aside {
+  grid-area: sidebar;
+  background-color: var(--bg-sidebar);
+  padding: 1rem;
+}
+
+html {
+  font-size: 16px;
+}
+
+main {
+  grid-area: main;
+  background-color: var(--bg-content);
+  padding: 1rem;
+}
+
+footer {
+  grid-area: footer;
+  background-color: var(--bg-footer);
+  text-align: center;
+  line-height: var(--footer-height);
+}
+
+@media (max-width: 768px) {
+  body {
+    grid-template-columns: 1fr;
+    grid-template-rows: var(--header-height) auto 1fr var(--footer-height);
+    grid-template-areas:
+      "header"
+      "sidebar"
+      "main"
+      "footer";
+  }
+}

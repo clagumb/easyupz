@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "go",
+            "name": "Go configuration",
+            "goExecPath": "~/go/bin/gopls",
+            "buildParams": []
+
+        }
+    ]
+}
