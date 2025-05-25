@@ -25,16 +25,37 @@ export async function init() {
             return;
         }
 
-        // HTML-Liste erzeugen
-        const ul = document.createElement("ul");
+        // Tabelle erzeugen
+        const table = document.createElement("table");
+        table.style.borderCollapse = "collapse";
+        table.style.width = "100%";
 
+        // Tabellenkopf
+        table.innerHTML = `
+      <thead>
+        <tr>
+          <th style="border: 1px solid black; padding: 4px;">Vorname</th>
+          <th style="border: 1px solid black; padding: 4px;">Nachname</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    `;
+
+        const tbody = table.querySelector("tbody")!;
+
+        // Datenzeilen
         for (const lehrer of lehrerListe) {
-            const li = document.createElement("li");
-            li.textContent = `${lehrer.vorname} ${lehrer.nachname}`;
-            ul.appendChild(li);
+            const row = document.createElement("tr");
+            row.innerHTML = `
+        <td style="border: 1px solid black; padding: 4px;">${lehrer.vorname}</td>
+        <td style="border: 1px solid black; padding: 4px;">${lehrer.nachname}</td>
+      `;
+            tbody.appendChild(row);
         }
 
-        container.appendChild(ul);
+        container.innerHTML = ""; // vorherigen Inhalt löschen
+        container.appendChild(table);
+
     } catch (error) {
         console.error("Fehler beim Abrufen der Lehrerdaten:", error);
     }
