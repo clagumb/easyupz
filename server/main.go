@@ -3,21 +3,31 @@ package main
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
+type lehrerstamm struct {
+	Id       uint   `json:"id"`
+	Vorname  string `json:"vorname"`
+	Nachname string `json:"nachname"`
+}
+
+var lehrkraefte = []lehrerstamm{
+	{Id: 1, Vorname: "Anna", Nachname: "Müller"},
+	{Id: 2, Vorname: "Peter", Nachname: "Schmidt"},
+}
+
 func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		n, err := fmt.Fprintln(w, "Hallo aus Go2!")
-		if err != nil {
-			fmt.Println("Fehler beim Schreiben: ", err)
-			return
-		}
-		fmt.Println("Anzahl der geschriebenen Bytes: ", n)
-	})
-	fmt.Println("Server läuft auf http://localhost:8080")
-	err := http.ListenAndServe(":8080", nil)
+	router := gin.Default()
+	router.GET("/lehrer", findAll)
+	err := router.Run("localhost:8080")
 	if err != nil {
-		fmt.Println("Der Server ist nicht gestartet: ", err)
+		fmt.Println("Fehler: ", err)
 		return
 	}
+}
+
+func findAll(content *gin.Context) {
+	content.IndentedJSON(http.StatusOK, lehrkraefte)
 }
