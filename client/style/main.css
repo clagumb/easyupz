@@ -53,6 +53,9 @@ main {
   grid-area: main;
   background-color: var(--bg-content);
   padding: 1rem;
+  overflow: auto;
+  min-height: 0;
+  min-width: 0;
 }
 
 footer {
