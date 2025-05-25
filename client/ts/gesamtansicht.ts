@@ -4,6 +4,7 @@ type Lehrer = {
     nachname: string;
 };
 
+// Wird dynamisch über main.ts importiert und aufgerufen, deshalb "unused"
 export async function init() {
     console.log("Gesamtansicht initialisiert");
 

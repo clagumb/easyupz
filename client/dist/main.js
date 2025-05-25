@@ -13,12 +13,19 @@ function setupLinks() {
                     throw new Error(`Seite ${page} konnte nicht geladen werden.`);
                 const html = await response.text();
                 const main = document.getElementById('main-content');
-                if (main)
+                if (main) {
                     main.innerHTML = html;
-                // ⬇️ Nach dem Einfügen: das passende JS-Modul dynamisch importieren
-                const module = await import(`./${page}.js`);
-                if (module.init)
-                    module.init();
+                    setupLinks(); // reinitialisieren, falls neue Links geladen wurden
+                }
+                // Nachladen des passenden JS-Moduls
+                try {
+                    const module = await import(`./${page}.js`);
+                    if (module.init)
+                        module.init();
+                }
+                catch (e) {
+                    console.warn(`Kein passendes JS-Modul für ${page} gefunden.`);
+                }
             }
             catch (err) {
                 console.error(err);
