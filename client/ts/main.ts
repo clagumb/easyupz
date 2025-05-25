@@ -1,26 +1,30 @@
-const isLoggedIn: boolean = true; // oder false
-const username: string = "c.gumbmann";
+function setupLinks() {
+  const links = document.querySelectorAll<HTMLAnchorElement>('.aside-link');
 
-const userInfo = document.getElementById("user-info");
+  links.forEach(link => {
+    link.addEventListener('click', async (e) => {
+      e.preventDefault();
 
-if (userInfo) {
-  if (isLoggedIn) {
-    userInfo.innerHTML = `
-      <span style="margin-right: 1rem;">${username}</span>
-      <button id="logout-button">abmelden</button>
-    `;
+      const page = link.dataset.page;
+      if (!page) return;
 
-    const logoutButton = document.getElementById(
-      "logout-button",
-    ) as HTMLButtonElement;
-    logoutButton.addEventListener("click", logout);
-  } else {
-    userInfo.innerHTML = `<a href="/login" class="start-link">Login</a>`;
-  }
+      try {
+        const response = await fetch(`pages/${page}.html`);
+        if (!response.ok) throw new Error(`Seite ${page} konnte nicht geladen werden.`);
+
+        const html = await response.text();
+        const main = document.getElementById('main-content');
+        if (main) main.innerHTML = html;
+
+        // ⬇️ Nach dem Einfügen: das passende JS-Modul dynamisch importieren
+        const module = await import(`./${page}.js`);
+        if (module.init) module.init();
+
+      } catch (err) {
+        console.error(err);
+      }
+    });
+  });
 }
 
-function logout(): void {
-  // z. B. Token löschen, Session zurücksetzen, weiterleiten
-  alert("Sie wurden abgemeldet.");
-  // window.location.href = "/login";
-}
+setupLinks();

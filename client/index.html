@@ -4,21 +4,14 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>UPZ in Bayern</title>
-    <script src="dist/main.js" defer></script>
     <link rel="stylesheet" href="style/main.css"/>
     <link rel="stylesheet" href="style/button.css"/>
 </head>
 <body>
 <header>
     <div>
-        🔷
-        <a
-                href="index.html"
-                class="start-link"
-                tabindex="0"
-                aria-current="page"
-        >
-            Unterrichtspflichtzeit an Berufsschulen in Bayern
+        🔷 <a href="index.html" class="start-link" tabindex="0" aria-current="page">
+        Unterrichtspflichtzeit an Berufsschulen in Bayern
         </a>
     </div>
     <div class="header-right">
@@ -36,7 +29,7 @@
     </div>
 
     <div class="spacer-small">Unterrichtspflichtzeit</div>
-    <a href="#" class="aside-link">Gesamtübersicht</a>
+    <a href="#" class="aside-link" data-page="gesamtansicht">Gesamtübersicht</a>
     <a href="#" class="aside-link">Einzelbetrachtung</a>
     <a href="#" class="aside-link">Anrechnungen</a>
     <a href="#" class="aside-link spacer-big">Ermäßigungen</a>
@@ -49,7 +42,7 @@
     <a href="#" class="aside-link">Schulen</a>
 </aside>
 
-<main>📄 Hauptinhalt</main>
+<main id="main-content">📄 Hauptinhalt</main>
 
 <footer>
     © 2025 –
@@ -57,5 +50,8 @@
         GitHub: Claus Gumbmann
     </a>
 </footer>
+
+<script type="module" src="dist/main.js"></script>
+
 </body>
 </html>

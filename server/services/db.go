@@ -15,6 +15,5 @@ func Init() {
 		panic("Fehler beim Öffnen der Datenbank: " + err.Error())
 	}
 
-	// Automatisches Erstellen der Tabellen
 	DB.AutoMigrate(&models.Lehrer{})
 }
