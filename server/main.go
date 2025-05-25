@@ -3,31 +3,34 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"upzbayern/server/models"
+	"upzbayern/server/services"
 
 	"github.com/gin-gonic/gin"
 )
 
-type lehrerstamm struct {
-	Id       uint   `json:"id"`
-	Vorname  string `json:"vorname"`
-	Nachname string `json:"nachname"`
-}
-
-var lehrkraefte = []lehrerstamm{
-	{Id: 1, Vorname: "Anna", Nachname: "Müller"},
-	{Id: 2, Vorname: "Peter", Nachname: "Schmidt"},
-}
-
 func main() {
-	router := gin.Default()
-	router.GET("/lehrer", findAll)
-	err := router.Run("localhost:8080")
-	if err != nil {
-		fmt.Println("Fehler: ", err)
-		return
-	}
-}
+	services.Init()
 
-func findAll(content *gin.Context) {
-	content.IndentedJSON(http.StatusOK, lehrkraefte)
+	router := gin.Default()
+
+	router.GET("/lehrer", func(c *gin.Context) {
+		var lehrer []models.Lehrer
+		services.DB.Find(&lehrer)
+		c.JSON(http.StatusOK, lehrer)
+	})
+
+	router.POST("/lehrer", func(c *gin.Context) {
+		var neuer models.Lehrer
+		if err := c.BindJSON(&neuer); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		services.DB.Create(&neuer)
+		c.JSON(http.StatusCreated, neuer)
+	})
+
+	fmt.Println("Server läuft auf http://localhost:8080")
+	router.Run(":8080")
 }
