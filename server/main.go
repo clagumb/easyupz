@@ -16,9 +16,8 @@ func main() {
 	})
 	fmt.Println("Server läuft auf http://localhost:8080")
 	err := http.ListenAndServe(":8080", nil)
-	r
-	if error != nil {
-		fmt.Println("Der Server ist nicht gestartet: ", error)
+	if err != nil {
+		fmt.Println("Der Server ist nicht gestartet: ", err)
 		return
 	}
 }
