@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	//github.com/gin-contrib/cors"
 	"net/http"
-	//"time"
 	"upzbayern/models"
 	"upzbayern/services"
 
@@ -13,18 +11,14 @@ import (
 
 func main() {
 	services.Init()
-
 	router := gin.Default()
-	/*
-		router.Use(cors.New(cors.Config{
-			AllowOrigins:     []string{"*"},
-			AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-			AllowHeaders:     []string{"Origin", "Content-Type"},
-			ExposeHeaders:    []string{"Content-Length"},
-			AllowCredentials: false,
-			MaxAge:           12 * time.Hour,
-		}))
-	*/
+
+	router.StaticFS("/home", http.Dir("./static"))
+
+	router.GET("/", func(c *gin.Context) {
+		c.Redirect(http.StatusFound, "/home")
+	})
+
 	router.GET("/lehrer", func(c *gin.Context) {
 		var lehrer []models.Lehrer
 		services.DB.Find(&lehrer)
@@ -37,7 +31,6 @@ func main() {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-
 		services.DB.Create(&neuer)
 		c.JSON(http.StatusCreated, neuer)
 	})

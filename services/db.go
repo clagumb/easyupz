@@ -3,7 +3,7 @@ package services
 import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"upzbayern/server/models"
+	"upzbayern/models"
 )
 
 var DB *gorm.DB
