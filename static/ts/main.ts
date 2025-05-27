@@ -1,36 +1,36 @@
+console.log("main.js geladen");
+
 function setupLinks() {
-  const links = document.querySelectorAll<HTMLAnchorElement>('.aside-link');
+  document.body.addEventListener('click', async (e) => {
+    const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('.aside-link');
+    if (!link) return;
 
-  links.forEach(link => {
-    link.addEventListener('click', async (e) => {
-      e.preventDefault();
+    e.preventDefault();
+    const page = link.dataset.page;
+    if (!page) return;
 
-      const page = link.dataset.page;
-      if (!page) return;
+    console.log("Lade Seite:", page);
+
+    try {
+      const response = await fetch(`/static/pages/${page}.html`);
+      if (!response.ok) throw new Error(`Fehler beim Laden von ${page}`);
+
+      const html = await response.text();
+      const main = document.getElementById('main-content');
+      if (main) {
+        main.innerHTML = html;
+      }
 
       try {
-        const response = await fetch(`static/pages/${page}.html`);
-        if (!response.ok) throw new Error(`Seite ${page} konnte nicht geladen werden.`);
-
-        const html = await response.text();
-        const main = document.getElementById('main-content');
-        if (main) {
-          main.innerHTML = html;
-          setupLinks(); // reinitialisieren, falls neue Links geladen wurden
-        }
-
-        // Nachladen des passenden JS-Moduls
-        try {
-          const module = await import(`./${page}.js`);
-          if (module.init) module.init();
-        } catch (e) {
-          console.warn(`Kein passendes JS-Modul für ${page} gefunden.`);
-        }
-
-      } catch (err) {
-        console.error(err);
+        const module = await import(`./${page}.js`);
+        if (module.init) module.init();
+      } catch (e) {
+        console.warn(`Kein JS-Modul für ${page}`);
       }
-    });
+
+    } catch (err) {
+      console.error(err);
+    }
   });
 }
 
