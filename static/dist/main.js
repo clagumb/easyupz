@@ -8,7 +8,7 @@ function setupLinks() {
             if (!page)
                 return;
             try {
-                const response = await fetch(`pages/${page}.html`);
+                const response = await fetch(`static/pages/${page}.html`);
                 if (!response.ok)
                     throw new Error(`Seite ${page} konnte nicht geladen werden.`);
                 const html = await response.text();

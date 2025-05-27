@@ -1,7 +1,9 @@
 package main
 
 import (
+	"embed"
 	"fmt"
+	"io/fs"
 	"net/http"
 	"upzbayern/models"
 	"upzbayern/services"
@@ -9,14 +11,30 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//go:embed static/*
+var staticFiles embed.FS
+
+//go:embed static/index.html
+var indexHtml []byte
+
 func main() {
 	services.Init()
 	router := gin.Default()
 
-	router.StaticFS("/home", http.Dir("./static"))
+	staticContent, err := fs.Sub(staticFiles, "static")
+	if err != nil {
+		panic(err)
+	}
+	router.StaticFS("/static", http.FS(staticContent))
+
+	/*
+		router.GET("/", func(c *gin.Context) {
+			c.Redirect(http.StatusFound, "/home")
+		})
+	*/
 
 	router.GET("/", func(c *gin.Context) {
-		c.Redirect(http.StatusFound, "/home")
+		c.Data(http.StatusOK, "text/html; charset=utf-8", indexHtml)
 	})
 
 	router.GET("/lehrer", func(c *gin.Context) {
