@@ -27,12 +27,6 @@ func main() {
 	}
 	router.StaticFS("/static", http.FS(staticContent))
 
-	/*
-		router.GET("/", func(c *gin.Context) {
-			c.Redirect(http.StatusFound, "/home")
-		})
-	*/
-
 	router.GET("/", func(c *gin.Context) {
 		c.Data(http.StatusOK, "text/html; charset=utf-8", indexHtml)
 	})
@@ -53,6 +47,15 @@ func main() {
 		c.JSON(http.StatusCreated, neuer)
 	})
 
-	fmt.Println("Server läuft auf http://localhost:8080")
-	router.Run(":8080")
+	loader, err := services.NewConfigLoader()
+	if err != nil {
+		panic("konfiguration konnte nicht geladen werden: " + err.Error())
+	}
+
+	ip := loader.GetValue("server", "ip")
+	port := loader.GetValue("server", "port")
+	address := fmt.Sprintf("%s:%s", ip, port)
+
+	fmt.Println("Server läuft auf http://" + address)
+	router.Run(address)
 }
