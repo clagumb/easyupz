@@ -1,8 +1,10 @@
 console.log("main.js geladen");
 
 function setupLinks() {
-  document.body.addEventListener('click', async (e) => {
-    const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('.aside-link');
+  document.body.addEventListener("click", async (e) => {
+    const link = (e.target as HTMLElement).closest<HTMLAnchorElement>(
+      "a[data-page]",
+    );
     if (!link) return;
 
     e.preventDefault();
@@ -16,7 +18,7 @@ function setupLinks() {
       if (!response.ok) throw new Error(`Fehler beim Laden von ${page}`);
 
       const html = await response.text();
-      const main = document.getElementById('main-content');
+      const main = document.getElementById("main-content");
       if (main) {
         main.innerHTML = html;
       }
@@ -27,7 +29,6 @@ function setupLinks() {
       } catch (e) {
         console.warn(`Kein JS-Modul für ${page}`);
       }
-
     } catch (err) {
       console.error(err);
     }

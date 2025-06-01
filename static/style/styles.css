@@ -44,3 +44,135 @@
 .centered-text {
   text-align: center;
 }
+
+.login-wrapper {
+  max-width: 360px;
+  margin: 1.5rem auto;
+  background-color: #fefefe;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 1.5rem;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+  font-size: 0.9rem;
+}
+
+.login-wrapper h1 {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 0.75rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: normal;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 0.9rem;
+}
+
+.login-button {
+  width: 100%;
+  padding: 0.6rem;
+  font-size: 0.95rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+  background-color: #2980b9;
+}
+
+.login-footer {
+  margin-top: 0.8rem;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.login-footer a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+.login-footer a:hover {
+  text-decoration: underline;
+}
+
+.register-wrapper {
+      max-width: 360px;
+      margin: 1.5rem auto;
+      background-color: #fefefe;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 1.5rem;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+      font-size: 0.9rem;
+    }
+
+    .register-wrapper h1 {
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 0.75rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-weight: normal;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.4rem;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      font-size: 0.9rem;
+    }
+
+    .register-button {
+      width: 100%;
+      padding: 0.6rem;
+      font-size: 0.95rem;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .register-button:hover {
+      background-color: #2980b9;
+    }
+
+    .register-footer {
+      margin-top: 0.8rem;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+
+    .register-footer a {
+      color: #3498db;
+      text-decoration: none;
+    }
+
+    .register-footer a:hover {
+      text-decoration: underline;
+    }

@@ -1,8 +1,8 @@
 "use strict";
 console.log("main.js geladen");
 function setupLinks() {
-    document.body.addEventListener('click', async (e) => {
-        const link = e.target.closest('.aside-link');
+    document.body.addEventListener("click", async (e) => {
+        const link = e.target.closest("a[data-page]");
         if (!link)
             return;
         e.preventDefault();
@@ -15,7 +15,7 @@ function setupLinks() {
             if (!response.ok)
                 throw new Error(`Fehler beim Laden von ${page}`);
             const html = await response.text();
-            const main = document.getElementById('main-content');
+            const main = document.getElementById("main-content");
             if (main) {
                 main.innerHTML = html;
             }
