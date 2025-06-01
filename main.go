@@ -3,6 +3,8 @@ package main
 import (
 	"embed"
 	"fmt"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"io/fs"
 	"net/http"
 	"upzbayern/models"
@@ -20,27 +22,22 @@ var indexHtml []byte
 func main() {
 	services.Init()
 
-	// Test des Logins
-	err := services.RegisterBenutzer("seki", "seki123!", "verwaltung")
-	if err != nil {
-		fmt.Println("Fehler bei Registrierung:", err)
-	}
+	/*
+		err := services.RegisterBenutzer("seki", "seki123!", "verwaltung")
+		if err != nil {
+			fmt.Println("Fehler bei Registrierung:", err)
+		}
 
-	user, err := services.Login("admin", "!!UPZ!!")
-	if err != nil {
-		fmt.Println("Login fehlgeschlagen:", err)
-	} else {
-		fmt.Println("Login erfolgreich! Benutzer:", user.Benutzer, "Rolle:", user.Rolle)
-	}
-
-	user, err = services.Login("seki", "seki123!")
-	if err != nil {
-		fmt.Println("Login fehlgeschlagen:", err)
-	} else {
-		fmt.Println("Login erfolgreich! Benutzer:", user.Benutzer, "Rolle:", user.Rolle)
-	}
-
+		user, err := services.Login("admin", "!!UPZ!!")
+		if err != nil {
+			fmt.Println("Login fehlgeschlagen:", err)
+		} else {
+			fmt.Println("Login erfolgreich! Benutzer:", user.Benutzer, "Rolle:", user.Rolle)
+		}
+	*/
 	router := gin.Default()
+	store := cookie.NewStore([]byte("upzbayern")) // Das Secret kann beliebig sein
+	router.Use(sessions.Sessions("session", store))
 
 	staticContent, err := fs.Sub(staticFiles, "static")
 	if err != nil {
@@ -68,6 +65,64 @@ func main() {
 		c.JSON(http.StatusCreated, neuer)
 	})
 
+	router.POST("/login", func(c *gin.Context) {
+		var credentials struct {
+			Benutzer string `json:"benutzer"`
+			Passwort string `json:"passwort"`
+		}
+
+		if err := c.BindJSON(&credentials); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Ungültige Anfrage"})
+			return
+		}
+
+		user, err := services.Login(credentials.Benutzer, credentials.Passwort)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"status": "error", "message": "Login fehlgeschlagen"})
+			return
+		}
+
+		session := sessions.Default(c)
+		session.Set("benutzer", user.Benutzer)
+		err = session.Save()
+		if err != nil {
+			fmt.Println("Fehler beim Speichern der Session: ", err)
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"status":   "success",
+			"message":  "Login erfolgreich",
+			"benutzer": user.Benutzer,
+			"rolle":    user.Rolle,
+		})
+	})
+
+	router.POST("/logout", func(c *gin.Context) {
+		session := sessions.Default(c)
+		session.Clear()
+		err = session.Save()
+		if err != nil {
+			fmt.Println("Fehler beim Löschen der Session: ", err)
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "Logout erfolgreich"})
+	})
+
+	router.GET("/status", func(c *gin.Context) {
+		session := sessions.Default(c)
+		benutzer := session.Get("benutzer")
+
+		if benutzer == nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"message": "Nicht eingeloggt"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"benutzer": benutzer,
+		})
+	})
+
 	loader, err := services.NewConfigLoader()
 	if err != nil {
 		panic("konfiguration konnte nicht geladen werden: " + err.Error())
@@ -78,5 +133,9 @@ func main() {
 	address := fmt.Sprintf("%s:%s", ip, port)
 
 	fmt.Println("Server läuft auf http://" + address)
-	router.Run(address)
+	err = router.Run(address)
+	if err != nil {
+		fmt.Println("Fehler beim Starten des Servers ", err)
+		return
+	}
 }

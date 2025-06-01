@@ -35,4 +35,28 @@ function setupLinks() {
   });
 }
 
+async function checkLoginStatus() {
+  try {
+    const response = await fetch("/status");
+    if (!response.ok) return;
+
+    const data = await response.json();
+    const authStatus = document.getElementById("auth-status");
+    if (authStatus) {
+      authStatus.innerHTML = `
+        <a href="#" class="start-link" id="logout-link">Logout, ${data.benutzer}</a>
+      `;
+
+      document.getElementById("logout-link")?.addEventListener("click", async (e) => {
+        e.preventDefault();
+        await fetch("/logout", { method: "POST" });
+        location.reload();
+      });
+    }
+  } catch (err) {
+    console.error("Fehler beim Login-Check:", err);
+  }
+}
+
 setupLinks();
+void checkLoginStatus();
