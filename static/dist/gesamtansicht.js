@@ -1,7 +1,7 @@
 export async function init() {
     console.log("Gesamtansicht initialisiert");
     try {
-        const response = await fetch("http://localhost:8080/lehrer");
+        const response = await fetch("/lehrer");
         if (!response.ok)
             throw new Error(`Fehler beim Laden: ${response.status}`);
         const lehrerListe = await response.json();
