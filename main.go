@@ -19,6 +19,27 @@ var indexHtml []byte
 
 func main() {
 	services.Init()
+
+	// Test des Logins
+	err := services.RegisterBenutzer("seki", "seki123!", "verwaltung")
+	if err != nil {
+		fmt.Println("Fehler bei Registrierung:", err)
+	}
+
+	user, err := services.Login("admin", "!!UPZ!!")
+	if err != nil {
+		fmt.Println("Login fehlgeschlagen:", err)
+	} else {
+		fmt.Println("Login erfolgreich! Benutzer:", user.Benutzer, "Rolle:", user.Rolle)
+	}
+
+	user, err = services.Login("seki", "seki123!")
+	if err != nil {
+		fmt.Println("Login fehlgeschlagen:", err)
+	} else {
+		fmt.Println("Login erfolgreich! Benutzer:", user.Benutzer, "Rolle:", user.Rolle)
+	}
+
 	router := gin.Default()
 
 	staticContent, err := fs.Sub(staticFiles, "static")
