@@ -1,3 +1,4 @@
+import { setReloading } from "./session.js";
 export function init() {
     const form = document.querySelector("form");
     form?.addEventListener("submit", async (e) => {
@@ -15,6 +16,7 @@ export function init() {
         const result = await response.json();
         if (response.ok) {
             console.log("in login ok");
+            setReloading(true);
             location.reload();
         }
         else {

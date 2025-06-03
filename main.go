@@ -22,8 +22,11 @@ var indexHtml []byte
 
 func main() {
 	services.Init()
-
 	/*
+		err := services.RegisterBenutzer("lehrkraft", "lehrkraft", "lehrkraft")
+		if err != nil {
+			fmt.Println("Fehler bei Registrierung:", err)
+		}
 		err := services.RegisterBenutzer("seki", "seki123!", "verwaltung")
 		if err != nil {
 			fmt.Println("Fehler bei Registrierung:", err)
@@ -41,8 +44,9 @@ func main() {
 	store.Options(sessions.Options{
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   false,                // ← true nur bei HTTPS
-		SameSite: http.SameSiteLaxMode, // ← erlaubt Cookie bei fetch()
+		Secure:   false, // ← true nur bei HTTPS
+		SameSite: http.SameSiteLaxMode,
+		MaxAge:   0, // ← erlaubt Cookie bei fetch()
 	})
 	router.Use(sessions.Sessions("session", store))
 
@@ -126,12 +130,10 @@ func main() {
 	router.POST("/logout", func(c *gin.Context) {
 		session := sessions.Default(c)
 		session.Clear()
-		err = session.Save()
-		if err != nil {
+		if err := session.Save(); err != nil {
 			fmt.Println("Fehler beim Löschen der Session: ", err)
-			return
 		}
-		c.JSON(http.StatusOK, gin.H{"message": "Logout erfolgreich"})
+		c.Status(http.StatusOK) // ❗ keine JSON-Antwort mehr, einfach leer zurückgeben
 	})
 
 	// Config-Loader beginn

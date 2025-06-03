@@ -1,9 +1,14 @@
-"use strict";
+import { getReloading, setReloading } from "./session.js";
+window.addEventListener("beforeunload", () => {
+    if (!getReloading()) {
+        navigator.sendBeacon("/logout");
+    }
+});
 window.addEventListener("DOMContentLoaded", async () => {
     console.log("main.js geladen");
-    await checkLoginStatus(); // warte auf Session-Check
-    console.log("nach checkLogin");
-    setupLinks(); // danach: Navigation & Inhalte laden
+    await checkLoginStatus();
+    setupLinks();
+    setupReloadSafeNavigation();
 });
 function setupLinks() {
     document.body.addEventListener("click", async (e) => {
@@ -38,31 +43,48 @@ function setupLinks() {
         }
     });
 }
+function applyRoleVisibility(rolle) {
+    document.querySelectorAll(`[data-role]`).forEach(el => {
+        const rollen = el.dataset.role?.split(" ") ?? [];
+        if (rollen.includes(rolle) || rolle === "admin") {
+            el.classList.remove("hidden");
+        }
+    });
+}
 async function checkLoginStatus() {
     try {
         const response = await fetch("/status", {
             credentials: "include",
         });
-        if (!response.ok) {
-            console.log("in nicht okay");
+        if (!response.ok)
             return;
-        }
         const data = await response.json();
         const authStatus = document.getElementById("auth-status");
         if (authStatus) {
             authStatus.innerHTML = `
         <a href="#" class="start-link" id="logout-link">Logout, ${data.benutzer}</a>
       `;
-            document
-                .getElementById("logout-link")
-                ?.addEventListener("click", async (e) => {
+            document.getElementById("logout-link")?.addEventListener("click", async (e) => {
                 e.preventDefault();
                 await fetch("/logout", { method: "POST" });
+                setReloading(true);
                 location.reload();
             });
+            applyRoleVisibility(data.rolle);
         }
     }
     catch (err) {
         console.error("Fehler beim Login-Check:", err);
     }
+}
+function setupReloadSafeNavigation() {
+    document.body.addEventListener("click", (e) => {
+        const link = e.target.closest("a[href^='/']");
+        if (!link)
+            return;
+        // Ignoriere Links mit data-page (werden per fetch geladen)
+        if (!link.hasAttribute("data-page")) {
+            setReloading(true);
+        }
+    });
 }

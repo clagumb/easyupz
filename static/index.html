@@ -1,66 +1,63 @@
 <!doctype html>
 <html lang="de">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UPZ in Bayern</title>
-    <link rel="stylesheet" href="static/style/main.css" />
-    <link rel="stylesheet" href="static/style/styles.css" />
-    <link rel="icon" href="static/img/favicon32x32.png" type="image/png" />
-  </head>
-  <body>
-    <header>
-      <div>
-        🔷
-        <a href="/" class="start-link" tabindex="0" aria-current="page">
-          Unterrichtspflichtzeit an Berufsschulen in Bayern
-        </a>
-      </div>
-      <div class="header-right" id="auth-status">
-        <a href="#" class="start-link" data-page="login">Login</a>
-      </div>
-    </header>
 
-    <aside>
-      <div class="schuljahr-auswahl">
-        <label for="schuljahr">Schuljahr:</label>
-        <select id="schuljahr" name="schuljahr">
-          <option>2024/2025</option>
-          <option>2025/2026</option>
-        </select>
-      </div>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UPZ in Bayern</title>
+  <link rel="stylesheet" href="static/style/main.css" />
+  <link rel="stylesheet" href="static/style/styles.css" />
+  <link rel="icon" href="static/img/favicon32x32.png" type="image/png" />
+</head>
 
-      <div class="spacer-small">Unterrichtspflichtzeit</div>
-      <a href="#" class="aside-link" data-page="gesamtansicht">Gesamtansicht</a>
-      <a href="#" class="aside-link" data-page="einzelbetrachtung"
-        >Einzelbetrachtung</a
-      >
-      <a href="#" class="aside-link" data-page="anrechnung-lk">Anrechnungen</a>
-      <a href="#" class="aside-link spacer-big" data-page="ermaessigung-lk"
-        >Ermäßigungen</a
-      >
-
-      <div class="spacer-small">Administration</div>
-      <a href="#" class="aside-link" data-page="lehrkraefte">Lehrkräfte</a>
-      <a href="#" class="aside-link" data-page="schuljahre">Schuljahre</a>
-      <a href="#" class="aside-link" data-page="anrechnung-admin"
-        >Anrechnungen</a
-      >
-      <a href="#" class="aside-link" data-page="ermaessigung-admin"
-        >Ermäßigungen</a
-      >
-      <a href="#" class="aside-link" data-page="schulen">Schulen</a>
-    </aside>
-
-    <main id="main-content">📄 Hauptinhalt</main>
-
-    <footer>
-      © 2025 –
-      <a href="https://github.com/clagumb" target="_blank">
-        GitHub: Claus Gumbmann
+<body>
+  <header>
+    <div>
+      🔷
+      <a href="/" class="start-link" tabindex="0" aria-current="page">
+        Unterrichtspflichtzeit an Berufsschulen in Bayern
       </a>
-    </footer>
+    </div>
+    <div class="header-right" id="auth-status">
+      <a href="#" class="start-link" data-page="login">Login</a>
+    </div>
+  </header>
 
-    <script type="module" src="static/dist/main.js"></script>
-  </body>
+  <aside>
+    <div class="schuljahr-auswahl">
+      <label for="schuljahr">Schuljahr:</label>
+      <select id="schuljahr" name="schuljahr">
+        <option>2024/2025</option>
+        <option>2025/2026</option>
+      </select>
+    </div>
+
+    <div class="spacer-small hidden" data-role="admin verwaltung lehrkraft">Unterrichtspflichtzeit</div>
+    <a href="#" class="aside-link hidden" data-page="gesamtansicht" data-role="admin verwaltung">Gesamtansicht</a>
+    <a href="#" class="aside-link hidden" data-page="einzelbetrachtung"
+      data-role="admin verwaltung lehrkraft">Einzelbetrachtung</a>
+    <a href="#" class="aside-link hidden" data-page="anrechnung-lk" data-role="admin">Anrechnungen</a>
+    <a href="#" class="aside-link hidden" data-page="ermaessigung-lk" data-role="admin">Ermäßigungen</a>
+
+    <div class="spacer-big spacer-small hidden" data-role="admin">Administration</div>
+    <a href="#" class="aside-link hidden" data-page="lehrkraefte" data-role="admin">Lehrkräfte</a>
+    <a href="#" class="aside-link hidden" data-page="schuljahre" data-role="admin">Schuljahre</a>
+    <a href="#" class="aside-link hidden" data-page="anrechnung-admin" data-role="admin">Anrechnungen</a>
+    <a href="#" class="aside-link hidden" data-page="ermaessigung-admin" data-role="admin">Ermäßigungen</a>
+    <a href="#" class="aside-link hidden" data-page="schulen" data-role="admin">Schulen</a>
+    <a href="#" class="aside-link hidden" data-page="benutzerverwaltung" data-role="admin">Benutzerverwaltung</a>
+  </aside>
+
+  <main id="main-content">📄 Hauptinhalt</main>
+
+  <footer>
+    © 2025 –
+    <a href="https://github.com/clagumb" target="_blank">
+      GitHub: Claus Gumbmann
+    </a>
+  </footer>
+
+  <script type="module" src="static/dist/main.js"></script>
+</body>
+
 </html>
