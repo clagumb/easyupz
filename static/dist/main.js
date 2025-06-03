@@ -1,5 +1,10 @@
 "use strict";
-console.log("main.js geladen");
+window.addEventListener("DOMContentLoaded", async () => {
+    console.log("main.js geladen");
+    await checkLoginStatus(); // warte auf Session-Check
+    console.log("nach checkLogin");
+    setupLinks(); // danach: Navigation & Inhalte laden
+});
 function setupLinks() {
     document.body.addEventListener("click", async (e) => {
         const link = e.target.closest("a[data-page]");
@@ -33,4 +38,31 @@ function setupLinks() {
         }
     });
 }
-setupLinks();
+async function checkLoginStatus() {
+    try {
+        const response = await fetch("/status", {
+            credentials: "include",
+        });
+        if (!response.ok) {
+            console.log("in nicht okay");
+            return;
+        }
+        const data = await response.json();
+        const authStatus = document.getElementById("auth-status");
+        if (authStatus) {
+            authStatus.innerHTML = `
+        <a href="#" class="start-link" id="logout-link">Logout, ${data.benutzer}</a>
+      `;
+            document
+                .getElementById("logout-link")
+                ?.addEventListener("click", async (e) => {
+                e.preventDefault();
+                await fetch("/logout", { method: "POST" });
+                location.reload();
+            });
+        }
+    }
+    catch (err) {
+        console.error("Fehler beim Login-Check:", err);
+    }
+}

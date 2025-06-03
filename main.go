@@ -3,12 +3,13 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
 	"io/fs"
 	"net/http"
 	"upzbayern/models"
 	"upzbayern/services"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 
 	"github.com/gin-gonic/gin"
 )
@@ -37,12 +38,19 @@ func main() {
 	*/
 	router := gin.Default()
 	store := cookie.NewStore([]byte("upzbayern")) // Das Secret kann beliebig sein
+	store.Options(sessions.Options{
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   false,                // ← true nur bei HTTPS
+		SameSite: http.SameSiteLaxMode, // ← erlaubt Cookie bei fetch()
+	})
 	router.Use(sessions.Sessions("session", store))
 
 	staticContent, err := fs.Sub(staticFiles, "static")
 	if err != nil {
 		panic(err)
 	}
+
 	router.StaticFS("/static", http.FS(staticContent))
 
 	router.GET("/", func(c *gin.Context) {
@@ -84,6 +92,7 @@ func main() {
 
 		session := sessions.Default(c)
 		session.Set("benutzer", user.Benutzer)
+		session.Set("rolle", user.Rolle)
 		err = session.Save()
 		if err != nil {
 			fmt.Println("Fehler beim Speichern der Session: ", err)
@@ -98,6 +107,22 @@ func main() {
 		})
 	})
 
+	router.GET("/status", func(c *gin.Context) {
+		session := sessions.Default(c)
+		benutzer := session.Get("benutzer")
+		rolle := session.Get("rolle")
+
+		if benutzer == nil || rolle == nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"message": "Nicht eingeloggt"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"benutzer": benutzer,
+			"rolle":    rolle,
+		})
+	})
+
 	router.POST("/logout", func(c *gin.Context) {
 		session := sessions.Default(c)
 		session.Clear()
@@ -109,20 +134,7 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"message": "Logout erfolgreich"})
 	})
 
-	router.GET("/status", func(c *gin.Context) {
-		session := sessions.Default(c)
-		benutzer := session.Get("benutzer")
-
-		if benutzer == nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"message": "Nicht eingeloggt"})
-			return
-		}
-
-		c.JSON(http.StatusOK, gin.H{
-			"benutzer": benutzer,
-		})
-	})
-
+	// Config-Loader beginn
 	loader, err := services.NewConfigLoader()
 	if err != nil {
 		panic("konfiguration konnte nicht geladen werden: " + err.Error())

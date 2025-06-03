@@ -1,4 +1,9 @@
-console.log("main.js geladen");
+window.addEventListener("DOMContentLoaded", async () => {
+  console.log("main.js geladen");
+  await checkLoginStatus(); // warte auf Session-Check
+  console.log("nach checkLogin");
+  setupLinks(); // danach: Navigation & Inhalte laden
+});
 
 function setupLinks() {
   document.body.addEventListener("click", async (e) => {
@@ -37,8 +42,13 @@ function setupLinks() {
 
 async function checkLoginStatus() {
   try {
-    const response = await fetch("/status");
-    if (!response.ok) return;
+    const response = await fetch("/status", {
+      credentials: "include",
+    });
+    if (!response.ok) {
+      console.log("in nicht okay");
+      return;
+    }
 
     const data = await response.json();
     const authStatus = document.getElementById("auth-status");
@@ -47,16 +57,15 @@ async function checkLoginStatus() {
         <a href="#" class="start-link" id="logout-link">Logout, ${data.benutzer}</a>
       `;
 
-      document.getElementById("logout-link")?.addEventListener("click", async (e) => {
-        e.preventDefault();
-        await fetch("/logout", { method: "POST" });
-        location.reload();
-      });
+      document
+        .getElementById("logout-link")
+        ?.addEventListener("click", async (e) => {
+          e.preventDefault();
+          await fetch("/logout", { method: "POST" });
+          location.reload();
+        });
     }
   } catch (err) {
     console.error("Fehler beim Login-Check:", err);
   }
 }
-
-setupLinks();
-void checkLoginStatus();
