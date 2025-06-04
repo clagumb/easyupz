@@ -23,22 +23,27 @@ var indexHtml []byte
 func main() {
 	services.Init()
 	/*
-		err := services.RegisterBenutzer("lehrkraft", "lehrkraft", "lehrkraft")
+		err := services.RegisterBenutzer("admin", "!!UPZ!!", "admin")
 		if err != nil {
 			fmt.Println("Fehler bei Registrierung:", err)
 		}
-		err := services.RegisterBenutzer("seki", "seki123!", "verwaltung")
-		if err != nil {
-			fmt.Println("Fehler bei Registrierung:", err)
-		}
+			err := services.RegisterBenutzer("lehrkraft", "lehrkraft", "lehrkraft")
+			if err != nil {
+				fmt.Println("Fehler bei Registrierung:", err)
+			}
+			err = services.RegisterBenutzer("seki", "seki123!", "verwaltung")
+			if err != nil {
+				fmt.Println("Fehler bei Registrierung:", err)
+			}
 
-		user, err := services.Login("admin", "!!UPZ!!")
-		if err != nil {
-			fmt.Println("Login fehlgeschlagen:", err)
-		} else {
-			fmt.Println("Login erfolgreich! Benutzer:", user.Benutzer, "Rolle:", user.Rolle)
-		}
+			user, err := services.Login("admin", "!!UPZ!!")
+			if err != nil {
+				fmt.Println("Login fehlgeschlagen:", err)
+			} else {
+				fmt.Println("Login erfolgreich! Benutzer:", user.Benutzer, "Rolle:", user.Rolle)
+			}
 	*/
+
 	router := gin.Default()
 	store := cookie.NewStore([]byte("upzbayern")) // Das Secret kann beliebig sein
 	store.Options(sessions.Options{
