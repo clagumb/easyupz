@@ -2,12 +2,13 @@ package router
 
 import (
 	"embed"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
-	"github.com/gin-gonic/gin"
 	"io/fs"
 	"net/http"
 	"upzbayern/handlers"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
+	"github.com/gin-gonic/gin"
 )
 
 func Setup(staticFiles embed.FS, indexHtml []byte) *gin.Engine {
@@ -37,6 +38,8 @@ func Setup(staticFiles embed.FS, indexHtml []byte) *gin.Engine {
 	// API-Routen
 	r.GET("/lehrer", handlers.GetLehrer)
 	r.POST("/lehrer", handlers.PostLehrer)
+	r.GET("/anrechnungen", handlers.GetAnrechnug)
+	r.POST("/anrechnung", handlers.PostAnrechnung)
 	r.POST("/login", handlers.Login)
 	r.GET("/status", handlers.Status)
 	r.POST("/logout", handlers.Logout)

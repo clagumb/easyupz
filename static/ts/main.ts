@@ -88,7 +88,6 @@ function setupReloadSafeNavigation() {
     const link = (e.target as HTMLElement).closest<HTMLAnchorElement>("a[href^='/']");
     if (!link) return;
 
-    // Ignoriere Links mit data-page (werden per fetch geladen)
     if (!link.hasAttribute("data-page")) {
       setReloading(true);
     }

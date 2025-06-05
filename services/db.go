@@ -23,6 +23,6 @@ func Init() {
 		panic("Fehler beim Öffnen der Datenbank: " + err.Error())
 	}
 
-	DB.AutoMigrate(&models.Lehrer{}, &models.Benutzer{}, &models.Anrechnungen{})
+	DB.AutoMigrate(&models.Lehrer{}, &models.Benutzer{}, &models.Anrechnung{})
 	fmt.Println("Datenbankverbindung steht!")
 }
