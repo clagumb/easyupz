@@ -1,5 +1,6 @@
 Anwendung zur Verwaltung der Unterrichtspflichtzeiten für Lehrkräfte an Berufsschulen in Bayern
 
-![upzbayern](https://github.com/user-attachments/assets/0452cc61-9e5d-43bd-a0b2-8be103d61e1f)
+![easyupz](https://github.com/user-attachments/assets/9b09c60e-4656-420c-94cc-5738dae5bd38)
+
 
 
