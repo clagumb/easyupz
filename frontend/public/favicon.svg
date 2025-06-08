@@ -1,0 +1,9 @@
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+   .text { font-family: 'Inter', sans-serif; font-size: 28px; fill: #2C3E50; font-weight: 600; }
+   .dot { fill: #3498DB; }
+   .tick { fill: #2ECC71; }
+</style>
+<circle cx="30" cy="30" r="20" stroke="#2C3E50" stroke-width="2" fill="none"/>
+<path class="tick" d="M24 30 L28 34 L36 24" stroke="#2ECC71" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,36 @@
+return (
+    <>
+       <header>
+    <h1>Unterrichtspflichtzeit an Berufsschulen in Bayern</h1>
+    <div class="user-info">Logout, admin</div>
+  </header>
+  <div class="layout">
+    <nav>
+      <label for="schuljahr">Schuljahr:</label>
+      <select id="schuljahr">
+        <option>2024/2025</option>
+      </select>
+
+      <h2>Unterrichtspflichtzeit</h2>
+      <a href="#">Gesamtansicht</a>
+      <a href="#">Einzelbetrachtung</a>
+      <a href="#">Anrechnungen</a>
+      <a href="#">Erm&auml;&szlig;igungen</a>
+
+      <h2>Administration</h2>
+      <a href="#">Lehrkr&auml;fte</a>
+      <a href="#">Schuljahre</a>
+      <a href="#">Anrechnungen</a>
+      <a href="#">Erm&auml;&szlig;igungen</a>
+      <a href="#">Schulen</a>
+      <a href="#">Benutzerverwaltung</a>
+    </nav>
+    <main>
+      <p><span class="icon">📄</span>Hauptinhalt</p>
+    </main>
+  </div>
+  <footer>
+    &copy; 2025 &ndash; <a href="https://github.com/clausg">GitHub: Claus Gummann</a>
+  </footer>
+    </>
+  )

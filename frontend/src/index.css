@@ -1,0 +1,29 @@
+:root {
+    --header-height: 60px;
+    --footer-height: 40px;
+    --sidebar-width: 200px;
+    --bg-header: #2c3e50;
+    --bg-sidebar: #ecf0f1;
+    --bg-main: #ffffff;
+    --bg-footer: #bdc3c7;
+    --text-color: #333;
+}
+
+body {
+    margin: 0;
+    font-family: sans-serif;
+    background-color: #f4f6f8;
+    color: #333;
+    font-size: 16px;
+}
+
+.app-grid {
+    display: grid;
+    grid-template-rows: var(--header-height) 1fr var(--footer-height);
+    grid-template-columns: var(--sidebar-width) 1fr;
+    grid-template-areas:
+        "header header"
+        "sidebar main"
+        "footer footer";
+    min-height: 100vh;
+}
