@@ -1,20 +1,29 @@
-import Router from 'preact-router'
+import { Router } from 'preact-router'
+import AuthProvider from './services/auth-context'
 import Header from './components/header/header';
 import Aside from './components/aside/aside';
 import Footer from './components/footer/footer';
 import Home from './components/home/home';
+import Gesamtansicht from './components/home/pages/gesamtansicht/gesamtansicht';
+import Login from './components/home/pages/login/login';
 import './app.css'
 
 export function App() {
   return (
     <>
       <div class="app-grid">
-        <Header />
-        <Aside />
-        <Router>
-          <Home path="/start" />
-        </Router>
-        <Footer />
+        <AuthProvider>
+          <Header />
+          <Aside />
+          <main style={{ gridArea: "main" }}>
+            <Router>
+              <Home path="/" />
+              <Gesamtansicht path="/gesamtansicht" />
+              <Login path="/login" />
+            </Router>
+          </main>
+          <Footer />
+        </AuthProvider>
       </div>
     </>
   );

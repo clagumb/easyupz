@@ -1,20 +1,19 @@
 package router
 
 import (
+	"easyupz/handlers"
 	"embed"
-	"io/fs"
-	"net/http"
-	"upzbayern/handlers"
-
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+	"io/fs"
+	"net/http"
 )
 
 func Setup(staticFiles embed.FS, indexHtml []byte) *gin.Engine {
 	r := gin.Default()
 
-	store := cookie.NewStore([]byte("upzbayern")) // Das Secret kann beliebig sein
+	store := cookie.NewStore([]byte("easyupz")) // Das Secret kann beliebig sein
 	store.Options(sessions.Options{
 		Path:     "/",
 		HttpOnly: true,

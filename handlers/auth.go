@@ -1,11 +1,11 @@
 package handlers
 
 import (
+	"easyupz/services"
 	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"upzbayern/services"
 )
 
 func Login(c *gin.Context) {

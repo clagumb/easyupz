@@ -2,4 +2,6 @@ main {
   grid-area: main;
   padding: 1rem;
   background-color: var(--bg-main);
+  overflow: auto;
+  max-width: 100%;
 }

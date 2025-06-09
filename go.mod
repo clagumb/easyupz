@@ -1,4 +1,4 @@
-module upzbayern
+module easyupz
 
 go 1.23.0
 

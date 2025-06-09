@@ -1,9 +1,9 @@
 package services
 
 import (
+	"easyupz/models"
 	"errors"
 	"fmt"
-	"upzbayern/models"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"

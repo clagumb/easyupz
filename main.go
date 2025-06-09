@@ -1,10 +1,10 @@
 package main
 
 import (
+	"easyupz/router"
+	"easyupz/services"
 	"embed"
 	"fmt"
-	"upzbayern/router"
-	"upzbayern/services"
 )
 
 //go:embed start/*
@@ -15,31 +15,8 @@ var indexHtml []byte
 
 func main() {
 	services.Init()
-	/*
-		err := services.RegisterBenutzer("admin", "!!UPZ!!", "admin")
-		if err != nil {
-			fmt.Println("Fehler bei Registrierung:", err)
-		}
-			err := services.RegisterBenutzer("lehrkraft", "lehrkraft", "lehrkraft")
-			if err != nil {
-				fmt.Println("Fehler bei Registrierung:", err)
-			}
-			err = services.RegisterBenutzer("seki", "seki123!", "verwaltung")
-			if err != nil {
-				fmt.Println("Fehler bei Registrierung:", err)
-			}
-
-			user, err := services.Login("admin", "!!UPZ!!")
-			if err != nil {
-				fmt.Println("Login fehlgeschlagen:", err)
-			} else {
-				fmt.Println("Login erfolgreich! Benutzer:", user.Benutzer, "Rolle:", user.Rolle)
-			}
-	*/
-
 	r := router.Setup(staticFiles, indexHtml)
 
-	// Config-Loader beginn
 	loader, err := services.NewConfigLoader()
 	if err != nil {
 		panic("konfiguration konnte nicht geladen werden: " + err.Error())

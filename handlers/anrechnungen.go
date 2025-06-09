@@ -1,10 +1,10 @@
 package handlers
 
 import (
+	"easyupz/models"
+	"easyupz/services"
 	"fmt"
 	"net/http"
-	"upzbayern/models"
-	"upzbayern/services"
 
 	"github.com/gin-gonic/gin"
 )

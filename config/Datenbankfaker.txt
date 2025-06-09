@@ -1,0 +1,21 @@
+	/*
+		err := services.RegisterBenutzer("admin", "!!UPZ!!", "admin")
+		if err != nil {
+			fmt.Println("Fehler bei Registrierung:", err)
+		}
+			err := services.RegisterBenutzer("lehrkraft", "lehrkraft", "lehrkraft")
+			if err != nil {
+				fmt.Println("Fehler bei Registrierung:", err)
+			}
+			err = services.RegisterBenutzer("seki", "seki123!", "verwaltung")
+			if err != nil {
+				fmt.Println("Fehler bei Registrierung:", err)
+			}
+
+			user, err := services.Login("admin", "!!UPZ!!")
+			if err != nil {
+				fmt.Println("Login fehlgeschlagen:", err)
+			} else {
+				fmt.Println("Login erfolgreich! Benutzer:", user.Benutzer, "Rolle:", user.Rolle)
+			}
+	*/

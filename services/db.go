@@ -1,8 +1,8 @@
 package services
 
 import (
+	"easyupz/models"
 	"fmt"
-	"upzbayern/models"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"

@@ -1,10 +1,10 @@
 package handlers
 
 import (
+	"easyupz/models"
+	"easyupz/services"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"upzbayern/models"
-	"upzbayern/services"
 )
 
 func GetLehrer(c *gin.Context) {
