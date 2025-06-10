@@ -2,6 +2,7 @@ import { useState } from "preact/hooks";
 import type { Props } from '../../../types/PathProps.tsx';
 import { useAuth } from '../../../../services/auth-context.tsx'
 import type { JSX } from "preact/jsx-runtime";
+import { route } from "preact-router";
 
 import "./login.css";
 
@@ -30,6 +31,7 @@ const LoginForm = (_: Props) => {
       rolle: result.rolle,
       eingeloggt: true,
     });
+    route("/");
     } else {
       setError("Login fehlgeschlagen: " + result.message);
     }

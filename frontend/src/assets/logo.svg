@@ -1,12 +1,15 @@
-<svg width="240" height="60" viewBox="0 0 240 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-<style>
-   .text { font-family: 'Inter', sans-serif; font-size: 28px; fill: white; font-weight: 600; }
-   .dot { fill: #3498DB; }
-   .tick { fill: #2ECC71; }
-</style>
-<!-- Icon: Uhr mit Häkchen -->
-<circle cx="30" cy="30" r="20" stroke="white" stroke-width="2" fill="none"/>
-<path class="tick" d="M24 30 L28 34 L36 24" stroke="#2ECC71" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-<!-- Text: easyUPZ -->
-<text x="60" y="38" class="text">easy<tspan fill="#3498DB">UPZ</tspan></text>
+<svg width="360" height="60" viewBox="0 0 360 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .text { font-family: 'Inter', sans-serif; font-size: 28px; fill: white; font-weight: 600; }
+    .dot { fill: #3498DB; }
+    .tick { fill: #2ECC71; }
+    .small { font-size: 14.0px; fill: #2ECC71; }
+  </style>
+  <!-- Icon: Uhr mit Häkchen -->
+  <circle cx="30" cy="30" r="20" stroke="white" stroke-width="2" fill="none"/>
+  <path class="tick" d="M24 30 L28 34 L36 24" stroke="#2ECC71" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Text: easyUPZ (and more) -->
+  <text x="60" y="38" class="text">
+    easy<tspan fill="#3498DB">UPZ</tspan><tspan class="small"> (and more)</tspan>
+  </text>
 </svg>

@@ -12,7 +12,7 @@
 body {
     margin: 0;
     font-family: sans-serif;
-    background-color: #f4f6f8;
+    background-color: var(--bg-main);
     color: #333;
     font-size: 16px;
 }
