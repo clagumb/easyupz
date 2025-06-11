@@ -7,4 +7,5 @@ button {
   color: white;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  margin-right: 5px;
 }

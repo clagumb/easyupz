@@ -27,29 +27,29 @@ const LoginForm = (_: Props) => {
     if (response.ok) {
       console.log("in login ok");
       setAuth({
-      benutzer: result.benutzer,
-      rolle: result.rolle,
-      eingeloggt: true,
-    });
-    route("/");
+        benutzer: result.benutzer,
+        rolle: result.rolle,
+        eingeloggt: true,
+      });
+      route("/");
     } else {
       setError("Login fehlgeschlagen: " + result.message);
     }
   };
 
   return (
-    <div class="login-wrapper">
+    <div className={"login-wrapper"}>
       <h1>Login</h1>
       <form onSubmit={handleSubmit}>
-        <div class="form-group">
+        <div className="form-group">
           <input
             type="text"
             value={benutzer}
             onInput={(e: any) => setBenutzer(e.target.value)}
             placeholder="Benutzer"
           />
-          </div>
-           <div class="form-group">
+        </div>
+        <div className={"form-group"}>
           <input
             type="password"
             value={passwort}
@@ -57,7 +57,7 @@ const LoginForm = (_: Props) => {
             placeholder="Passwort"
           />
         </div>
-        <button type="submit" class="login-button">Anmelden</button>
+        <button type="submit" className={"login-button"}>Anmelden</button>
         {error && <p style={{ color: "red" }}>{error}</p>}
       </form>
     </div>

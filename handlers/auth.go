@@ -3,9 +3,10 @@ package handlers
 import (
 	"easyupz/services"
 	"fmt"
+	"net/http"
+
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func Login(c *gin.Context) {
@@ -61,8 +62,13 @@ func Status(c *gin.Context) {
 func Logout(c *gin.Context) {
 	session := sessions.Default(c)
 	session.Clear()
+	session.Options(sessions.Options{
+		Path:     "/",
+		MaxAge:   -1,
+		HttpOnly: true,
+	})
 	if err := session.Save(); err != nil {
 		fmt.Println("Fehler beim Löschen der Session: ", err)
 	}
-	c.Status(http.StatusOK) // ❗ keine JSON-Antwort mehr, einfach leer zurückgeben
+	c.Status(http.StatusOK)
 }

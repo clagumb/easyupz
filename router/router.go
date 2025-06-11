@@ -3,11 +3,12 @@ package router
 import (
 	"easyupz/handlers"
 	"embed"
+	"io/fs"
+	"net/http"
+
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
-	"io/fs"
-	"net/http"
 )
 
 func Setup(staticFiles embed.FS, indexHtml []byte) *gin.Engine {
@@ -19,9 +20,10 @@ func Setup(staticFiles embed.FS, indexHtml []byte) *gin.Engine {
 		HttpOnly: true,
 		Secure:   false, // ← true nur bei HTTPS
 		SameSite: http.SameSiteLaxMode,
-		MaxAge:   0, // ← erlaubt Cookie bei fetch()
+		MaxAge:   900,
 	})
 	r.Use(sessions.Sessions("session", store))
+	r.Use(handlers.ExtendSession(900))
 
 	staticContent, err := fs.Sub(staticFiles, "start")
 	if err != nil {

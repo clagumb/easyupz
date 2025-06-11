@@ -8,6 +8,6 @@ type Props = {
 
 const Link = PreactLink as unknown as (props: Props) => JSX.Element;
 
-export function NavLink({ href, children }: Props) {
-  return <Link href={href}>{children}</Link>;
+export function NavLink({ href, children, ...rest }: Props) {
+  return <Link href={href} {...rest}>{children}</Link>;
 }

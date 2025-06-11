@@ -4,6 +4,7 @@ import { useAuth } from "../../services/auth-context.tsx";
 import { route } from "preact-router";
 import "./header.css";
 
+
 export default function Header() {
   const [auth, setAuth] = useAuth();
 
@@ -16,9 +17,9 @@ export default function Header() {
   return (
     <header style={{ gridArea: "header" }}>
       <NavLink href="/">
-        <img src={fav_icon} alt="Logo" class="logo" />
+        <img src={fav_icon} alt="Logo" className={"logo"} />
       </NavLink>
-      <div className="header-right">
+      <div className={"header-right"}>
         <label htmlFor="schuljahr">Schuljahr:</label>
         <select id="schuljahr">
           <option>2024/2025</option>

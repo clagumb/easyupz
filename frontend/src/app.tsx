@@ -11,7 +11,7 @@ import './app.css'
 export function App() {
   return (
     <>
-      <div class="app-grid">
+      <div className={ "app-grid" }>
         <AuthProvider>
           <Header />
           <Aside />

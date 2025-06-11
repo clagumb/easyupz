@@ -3,16 +3,25 @@ import { useAuth } from '../../services/auth-context.tsx'
 import "./aside.css";
 
 export default function Aside() {
-    const [auth] = useAuth();
+    const [auth,] = useAuth();
 
     switch (auth.rolle) {
         case "admin":
             return (
                 <aside style={{ gridArea: "sidebar" }}>
-                    Unterrichtspflichtszeit<br />
-                    <NavLink href="/gesamtansicht">Gesamtansicht</NavLink>
+                    <p>Unterrichtspflichtszeit</p>
+                    <NavLink href="/gesamtansicht" className={"button-link"}>Gesamtansicht</NavLink>
+                    <p className={"big-spacer"}>Administration</p>
+                     <NavLink href="/benutzer" className={"button-link"}>Benutzerverwaltung</NavLink>
                 </aside>
             );
+            break;
+        
+            case "schulleitung":
+            break;
+        
+            case "lehrkraft":
+            break;
 
         default:
             return (
@@ -20,6 +29,7 @@ export default function Aside() {
                     Unterrichtspflichtszeit<br />
                 </aside>
             );
+            break;
     }
 }
 
