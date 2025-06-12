@@ -7,6 +7,13 @@ type Anrechnung struct {
 	Langform    string `gorm:"not null" json:"langform"`
 }
 
+type AnrechnungResponse struct {
+	ID          uint   `json:"id"`
+	Kurzform    string `json:"kurzform"`
+	Anzeigeform string `json:"anzeigeform"`
+	Langform    string `json:"langform"`
+}
+
 func (Anrechnung) TableName() string {
 	return "anrechnungen"
 }

@@ -37,13 +37,19 @@ func Setup(staticFiles embed.FS, indexHtml []byte) *gin.Engine {
 	})
 
 	// API-Routen
-	r.GET("/lehrer", handlers.GetLehrer)
-	r.POST("/lehrer", handlers.PostLehrer)
-	r.GET("/anrechnungen", handlers.GetAnrechnug)
-	r.POST("/anrechnung", handlers.PostAnrechnung)
-	r.POST("/login", handlers.Login)
 	r.GET("/status", handlers.Status)
 	r.POST("/logout", handlers.Logout)
+	r.POST("/login", handlers.Login)
+
+	r.GET("/lehrer", handlers.GetLehrer)
+	r.POST("/lehrer", handlers.PostLehrer)
+
+	r.GET("/anrechnungen", handlers.GetAnrechnug)
+	r.POST("/anrechnung", handlers.PostAnrechnung)
+
+	r.GET("/benutzer", handlers.GetAnrechnug)
+	r.POST("/benutzer", handlers.PostAnrechnung)
+	r.DELETE("/benutzer/:id", handlers.DeleteBenutzer)
 
 	return r
 }
