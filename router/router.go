@@ -47,8 +47,8 @@ func Setup(staticFiles embed.FS, indexHtml []byte) *gin.Engine {
 	r.GET("/anrechnungen", handlers.GetAnrechnug)
 	r.POST("/anrechnung", handlers.PostAnrechnung)
 
-	r.GET("/benutzer", handlers.GetAnrechnug)
-	r.POST("/benutzer", handlers.PostAnrechnung)
+	r.GET("/benutzer", handlers.GetBenutzer)
+	r.POST("/benutzer", handlers.PostBenutzer)
 	r.DELETE("/benutzer/:id", handlers.DeleteBenutzer)
 
 	return r

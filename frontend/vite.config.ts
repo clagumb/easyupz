@@ -10,6 +10,14 @@ export default defineConfig({
         target: 'http://127.0.0.1:8080',
         changeOrigin: true,
       },
+      '/benutzer': {
+        target: 'http://127.0.0.1:8080',
+        changeOrigin: true,
+      },
+      '/anrechnungen': {
+        target: 'http://127.0.0.1:8080',
+        changeOrigin: true,
+      },
       '/login': {
         target: 'http://127.0.0.1:8080',
         changeOrigin: true,
@@ -18,7 +26,7 @@ export default defineConfig({
         target: 'http://127.0.0.1:8080',
         changeOrigin: true,
       },
-         '/status': {
+      '/status': {
         target: 'http://127.0.0.1:8080',
         changeOrigin: true,
       },

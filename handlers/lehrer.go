@@ -8,7 +8,7 @@ import (
 )
 
 func GetLehrer(c *gin.Context) {
-	var lehrer []models.LehrerResponse
+	var lehrer []models.Lehrer
 	services.DB.Find(&lehrer)
 	c.JSON(http.StatusOK, lehrer)
 }

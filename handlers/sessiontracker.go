@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"log"
+
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
@@ -15,6 +17,9 @@ func ExtendSession(maxAge int) gin.HandlerFunc {
 				HttpOnly: true,
 			})
 			session.Save()
+			if err := session.Save(); err != nil {
+				log.Println("Fehler beim Speichern der Session:", err)
+			}
 		}
 		c.Next()
 	}

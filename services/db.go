@@ -3,6 +3,7 @@ package services
 import (
 	"easyupz/models"
 	"fmt"
+	"log"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -24,5 +25,9 @@ func Init() {
 	}
 
 	DB.AutoMigrate(&models.Lehrer{}, &models.Benutzer{}, &models.Anrechnung{})
+	if err := DB.AutoMigrate(&models.Lehrer{}, &models.Benutzer{}, &models.Anrechnung{}); err != nil {
+		log.Fatalf("AutoMigrate fehlgeschlagen: %v", err)
+	}
+
 	fmt.Println("Datenbankverbindung steht!")
 }
