@@ -6,7 +6,11 @@ export default defineConfig({
   plugins: [preact()],
   server: {
     proxy: {
-      '/lehrer': {
+      '/gesamtansicht': {
+        target: 'http://127.0.0.1:8080',
+        changeOrigin: true,
+      },
+      '/lehrerverwaltung': {
         target: 'http://127.0.0.1:8080',
         changeOrigin: true,
       },

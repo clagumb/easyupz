@@ -1,5 +1,5 @@
-import { NavLink } from "../types/NavLink.tsx";
-import { useAuth } from '../../services/auth-context.tsx'
+import {NavLink} from "../types/NavLink.tsx";
+import {useAuth} from '../../services/auth-context.tsx'
 import "./aside.css";
 
 export default function Aside() {
@@ -8,28 +8,37 @@ export default function Aside() {
     switch (auth.rolle) {
         case "admin":
             return (
-                <aside style={{ gridArea: "sidebar" }}>
+                <aside style={{gridArea: "sidebar"}}>
                     <p>Unterrichtspflichtszeit</p>
                     <NavLink href="/gesamtansicht" className={"button-link"}>Gesamtansicht</NavLink>
                     <p className={"big-spacer"}>Administration</p>
-                     <NavLink href="/benutzer" className={"button-link"}>Benutzerverwaltung</NavLink>
+                    <NavLink href="/lehrerverwaltung" className={"button-link"}>Lehrerverwaltung</NavLink>
+                    <NavLink href="/benutzer" className={"button-link"}>Benutzerverwaltung</NavLink>
                 </aside>
             );
-            break;
-        
-            case "schulleitung":
-            break;
-        
-            case "lehrkraft":
-            break;
+
+        case "schulleitung":
+            return (
+                <aside style={{gridArea: "sidebar"}}>
+                    <p>Unterrichtspflichtszeit</p>
+                    Für angemeldete Mitglieder der Schulleitung
+                </aside>
+            );
+
+        case "lehrkraft":
+            return (
+                <aside style={{gridArea: "sidebar"}}>
+                    <p>Unterrichtspflichtszeit</p>
+                    Für angemeldete Lehrkräfte
+                </aside>
+            );
 
         default:
             return (
-                <aside style={{ gridArea: "sidebar" }}>
-                    Unterrichtspflichtszeit<br />
+                <aside style={{gridArea: "sidebar"}}>
+                    Unterrichtspflichtszeit<br/>
                 </aside>
             );
-            break;
     }
 }
 

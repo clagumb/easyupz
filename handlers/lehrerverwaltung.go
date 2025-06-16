@@ -7,13 +7,15 @@ import (
 	"net/http"
 )
 
-func GetLehrer(c *gin.Context) {
+func GetLehrerverwaltung(c *gin.Context) {
 	var lehrer []models.Lehrer
-	services.DB.Find(&lehrer)
+	services.DB.
+		Order("lehrer.nachname, lehrer.vorname").
+		Find(&lehrer)
 	c.JSON(http.StatusOK, lehrer)
 }
 
-func PostLehrer(c *gin.Context) {
+func PostLehrerverwaltung(c *gin.Context) {
 	var neuer models.Lehrer
 	if err := c.BindJSON(&neuer); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

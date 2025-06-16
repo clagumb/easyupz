@@ -6,6 +6,7 @@ import Footer from './components/footer/footer';
 import Home from './components/home/home';
 import Gesamtansicht from './components/home/pages/gesamtansicht/gesamtansicht';
 import Benutzer from './components/home/pages/benutzer/benutzer';
+import Lehrerverwaltung from './components/home/pages/lehrerverwaltung/lehrerverwaltung';
 import Login from './components/home/pages/login/login';
 import './app.css'
 
@@ -22,6 +23,7 @@ export function App() {
               <Home path="/" />
               <Gesamtansicht path="/gesamtansicht" />
               <Benutzer path="/benutzer" />
+              <Lehrerverwaltung path="/lehrerverwaltung" />
             </Router>
           </main>
           <Footer />

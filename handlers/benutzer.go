@@ -10,7 +10,9 @@ import (
 
 func GetBenutzer(c *gin.Context) {
 	var benutzer []models.Benutzer
-	services.DB.Find(&benutzer)
+	services.DB.
+		Order("benutzer.rolle, benutzer.benutzer").
+		Find(&benutzer)
 	c.JSON(http.StatusOK, benutzer)
 }
 
@@ -28,7 +30,7 @@ func PostBenutzer(c *gin.Context) {
 		return
 	}
 
-	benutzerResponse,err := services.RegisterBenutzer(neuerBenutzer.Benutzer, neuerBenutzer.Passwort, neuerBenutzer.Rolle, neuerBenutzer.Kuerzel)
+	benutzerResponse, err := services.RegisterBenutzer(neuerBenutzer.Benutzer, neuerBenutzer.Passwort, neuerBenutzer.Rolle, neuerBenutzer.Kuerzel)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

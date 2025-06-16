@@ -12,7 +12,7 @@ export default function Gesamtansicht(_: Props) {
   const [lehrerListe, setLehrerListe] = useState<Lehrer[]>([]);
 
   useEffect(() => {
-    fetch('/lehrer')
+    fetch('/gesamtansicht')
       .then((res) => res.ok ? res.json() : Promise.reject(res.status))
       .then((data: Lehrer[]) => setLehrerListe(data))
       .catch((err) => console.error('Fehler beim Laden der Lehrerliste:', err));
