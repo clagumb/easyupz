@@ -1,7 +1,7 @@
 package models
 
 type Gesamtansicht struct {
-	Id       uint   `json:"id"`
+	ID       uint   `json:"id"`
 	Vorname  string `json:"vorname"`
 	Nachname string `json:"nachname"`
 }

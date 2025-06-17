@@ -1,6 +1,7 @@
 import "./lehrerverwaltung.css";
 import type { Props } from "../../../types/PathProps.tsx";
 import { useEffect, useState } from "preact/hooks";
+import dayjs from "dayjs";
 
 type Lehrer = {
   id: number;
@@ -126,8 +127,8 @@ export default function Lehrerverwaltung(_: Props) {
           {lehrerListe.map((lehrer: Lehrer) => (
             <tr key={lehrer.id}>
               <td data-label="Vorname">{lehrer.vorname}</td>
-              <td data-label="Nachname">{lehrer.nachname.toUpperCase()}</td>
-              <td data-label="Geburtsdatum">{lehrer.geburtsdatum}</td>
+              <td data-label="Nachname">{lehrer.nachname}</td>
+              <td data-label="Geburtsdatum">{dayjs(lehrer.geburtsdatum).format("DD.MM.YYYY")}</td>
                 <td data-label="Dienstverhaeltnis">{lehrer.dienstverhaeltnis}</td>
                 <td data-label="Qualifikationsebene">{lehrer.qualifikationsebene}</td>
                 <td data-label="Stammschuke">{lehrer.stammschule}</td>
