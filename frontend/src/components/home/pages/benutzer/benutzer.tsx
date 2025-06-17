@@ -101,7 +101,7 @@ export default function Benutzer(_: Props) {
   return (
     <>
       <h1>Benutzerverwaltung</h1>
-      <table id="lehrer-tabelle">
+      <table id="benutzer-tabelle">
         <thead>
           <tr>
             <th>Benutzer</th>

@@ -1,4 +1,4 @@
-#lehrer-tabelle {
+#benutzer-tabelle {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
@@ -10,31 +10,31 @@
   overflow: hidden;
 }
 
-#lehrer-tabelle thead {
+#benutzer-tabelle thead {
   background-color: #f4f6f8;
   text-align: left;
 }
 
-#lehrer-tabelle th,
-#lehrer-tabelle td {
+#benutzer-tabelle th,
+#benutzer-tabelle td {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid #e5e7eb;
 }
 
-#lehrer-tabelle th {
+#benutzer-tabelle th {
   font-weight: 600;
   color: #374151;
 }
 
-#lehrer-tabelle tbody tr:nth-of-type(even) {
+#benutzer-tabelle tbody tr:nth-of-type(even) {
   background-color: #f9fafb;
 }
 
-#lehrer-tabelle tbody tr:hover {
+#benutzer-tabelle tbody tr:hover {
   background-color: #eef2f7;
 }
 
-#lehrer-tabelle td {
+#benutzer-tabelle td {
   color: #4b5563;
 }
 
@@ -84,21 +84,21 @@
 
 /* Responsives Verhalten */
 @media (max-width: 600px) {
-  #lehrer-tabelle,
-  #lehrer-tabelle thead,
-  #lehrer-tabelle tbody,
-  #lehrer-tabelle th,
-  #lehrer-tabelle td,
-  #lehrer-tabelle tr {
+  #benutzer-tabelle,
+  #benutzer-tabelle thead,
+  #benutzer-tabelle tbody,
+  #benutzer-tabelle th,
+  #benutzer-tabelle td,
+  #benutzer-tabelle tr {
     display: block;
     width: 100%;
   }
 
-  #lehrer-tabelle thead {
+  #benutzer-tabelle thead {
     display: none;
   }
 
-  #lehrer-tabelle tr {
+  #benutzer-tabelle tr {
     margin-bottom: 1rem;
     background: #fff;
     border: 1px solid #e5e7eb;
@@ -106,14 +106,14 @@
     padding: 0.5rem;
   }
 
-  #lehrer-tabelle td {
+  #benutzer-tabelle td {
     display: flex;
     justify-content: space-between;
     padding: 0.5rem;
     border-bottom: none;
   }
 
-  #lehrer-tabelle td::before {
+  #benutzer-tabelle td::before {
     content: attr(data-label);
     font-weight: 600;
     color: #6b7280;

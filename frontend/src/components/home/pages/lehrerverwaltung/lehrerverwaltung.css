@@ -50,15 +50,16 @@
   transform: scale(1.2);
 }
 
-.benutzer-formular {
+.lehrer-formular {
   margin-top: 2rem;
   display: grid;
   gap: 1rem;
-  grid-template-columns:  1fr 1fr 1fr 1fr auto;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  grid-auto-rows: auto;
   align-items: end;
 }
 
-.benutzer-formular label {
+.lehrer-formular label {
   display: flex;
   flex-direction: column;
   font-weight: bold;
