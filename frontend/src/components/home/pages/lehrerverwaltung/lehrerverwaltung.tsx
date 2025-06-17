@@ -4,7 +4,7 @@ import { useEffect, useState } from "preact/hooks";
 import dayjs from "dayjs";
 
 type Lehrer = {
-  id: number;
+  lehrer_id: number;
   vorname: string;
   nachname: string;
   geburtsdatum: string;
@@ -125,7 +125,7 @@ export default function Lehrerverwaltung(_: Props) {
         </thead>
         <tbody>
           {lehrerListe.map((lehrer: Lehrer) => (
-            <tr key={lehrer.id}>
+            <tr key={lehrer.lehrer_id}>
               <td data-label="Vorname">{lehrer.vorname}</td>
               <td data-label="Nachname">{lehrer.nachname}</td>
               <td data-label="Geburtsdatum">{dayjs(lehrer.geburtsdatum).format("DD.MM.YYYY")}</td>

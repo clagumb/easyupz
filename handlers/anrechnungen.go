@@ -10,7 +10,7 @@ import (
 )
 
 func GetAnrechnug(c *gin.Context) {
-	var anrechnungen []models.AnrechnungResponse
+	var anrechnungen []models.Anrechnung
 	services.DB.Find(&anrechnungen)
 	c.JSON(http.StatusOK, anrechnungen)
 }

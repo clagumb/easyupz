@@ -3,7 +3,7 @@ import type { Props } from "../../../types/PathProps.tsx";
 import { useEffect, useState } from "preact/hooks";
 
 type Benutzer = {
-  id: number;
+  benutzer_id: number;
   benutzer: string;
   rolle: "";
   kuerzel: "";
@@ -38,7 +38,7 @@ export default function Benutzer(_: Props) {
   }, []);
 
   function handleDelete(id: number) {
-    const benutzer = benutzerListe.find((b) => b.id === id);
+    const benutzer = benutzerListe.find((b) => b.benutzer_id === id);
     if (!benutzer) return;
 
     if (!confirm(`Benutzer "${benutzer.benutzer}" wirklich löschen?`)) return;
@@ -50,7 +50,7 @@ export default function Benutzer(_: Props) {
         return data;
       })
       .then(() => {
-        setBenutzerListe((prev) => prev.filter((b) => b.id !== id));
+        setBenutzerListe((prev) => prev.filter((b) => b.benutzer_id !== id));
         alert("Benutzer erfolgreich gelöscht.");
       })
       .catch((err) => {
@@ -112,7 +112,7 @@ export default function Benutzer(_: Props) {
         </thead>
         <tbody>
           {benutzerListe.map((benutzer: Benutzer) => (
-            <tr key={benutzer.id}>
+            <tr key={benutzer.benutzer_id}>
               <td data-label="Benutzer">{benutzer.benutzer}</td>
               <td data-label="Rolle">{benutzer.rolle?.toUpperCase()}</td>
               <td data-label="Kuerzel">{benutzer.kuerzel}</td>
@@ -120,7 +120,7 @@ export default function Benutzer(_: Props) {
                 <button
                   className="loeschen-button"
                   title="Benutzer löschen"
-                  onClick={() => handleDelete(benutzer.id)}
+                  onClick={() => handleDelete(benutzer.benutzer_id)}
                 >
                   🗑️
                 </button>

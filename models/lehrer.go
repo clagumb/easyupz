@@ -1,7 +1,7 @@
 package models
 
 type Lehrer struct {
-	ID                uint   `gorm:"primaryKey" json:"id"`
+	ID                uint   `gorm:"primaryKey" json:"lehrer_id"`
 	Vorname           string `json:"vorname"`
 	Nachname          string `gorm:"not null" json:"nachname"`
 	Geburtsdatum      string `json:"geburtsdatum"`
