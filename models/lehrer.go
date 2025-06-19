@@ -10,7 +10,7 @@ type Lehrer struct {
 	Nachname          string            `gorm:"not null" json:"nachname"`
 	Geburtsdatum      dateutil.DateOnly `json:"geburtsdatum"`
 	Dienstverhaeltnis string            `gorm:"not null" json:"dienstverhaeltnis"`
-	QE                uint8             `gorm:"not null" json:"qualifikationsebene"`
+	QE                string            `gorm:"not null" json:"qualifikationsebene"`
 	Stammschule       string            `gorm:"not null" json:"stammschule"`
 }
 

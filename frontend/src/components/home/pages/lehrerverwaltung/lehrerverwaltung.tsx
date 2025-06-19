@@ -9,7 +9,7 @@ type Lehrer = {
     nachname: string;
     geburtsdatum: string;
     dienstverhaeltnis: string;
-    qualifikationsebene: number;
+    qualifikationsebene: string;
     stammschule: string;
 };
 
@@ -18,7 +18,7 @@ type NeuerLehrer = {
     nachname: string;
     geburtsdatum: string;
     dienstverhaeltnis: string;
-    qualifikationsebene: number;
+    qualifikationsebene: string;
     stammschule: string;
 };
 
@@ -29,7 +29,7 @@ export default function Lehrerverwaltung(_: Props) {
         nachname: "",
         geburtsdatum: "",
         dienstverhaeltnis: "",
-        qualifikationsebene: 0,
+        qualifikationsebene: "",
         stammschule: "",
     });
 
@@ -43,29 +43,6 @@ export default function Lehrerverwaltung(_: Props) {
             });
     }, []);
 
-    /*
-    function handleDelete(id: number) {
-      const benutzer = benutzerListe.find((b) => b.id === id);
-      if (!benutzer) return;
-
-      if (!confirm(`Benutzer "${benutzer.benutzer}" wirklich löschen?`)) return;
-
-      fetch(`/benutzer/${id}`, { method: "DELETE" })
-        .then(async (res) => {
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.error || "Fehler beim Löschen");
-          return data;
-        })
-        .then(() => {
-          setBenutzerListe((prev) => prev.filter((b) => b.id !== id));
-          alert("Benutzer erfolgreich gelöscht.");
-        })
-        .catch((err) => {
-          console.error("Fehler beim Löschen:", err);
-          alert(err.message || "Unbekannter Fehler beim Löschen.");
-        });
-    }
-    */
     function handleAdd() {
         if (
             !neuerLehrer.nachname ||
@@ -94,7 +71,7 @@ export default function Lehrerverwaltung(_: Props) {
                     nachname: "",
                     geburtsdatum: "",
                     dienstverhaeltnis: "",
-                    qualifikationsebene: 0,
+                    qualifikationsebene: "",
                     stammschule: "",
                 });
             })
@@ -207,15 +184,15 @@ export default function Lehrerverwaltung(_: Props) {
                         onChange={(e) => {
                             setNeuerLehrer({
                                 ...neuerLehrer,
-                                qualifikationsebene: Number((e.target as HTMLInputElement).value),
+                                qualifikationsebene: (e.target as HTMLInputElement).value,
                             });
                         }}
                     >
                         <option value="" disabled hidden>
-                            Bitte Qualifikationseben wählen
+                            Bitte Qualifikationsebene wählen
                         </option>
-                        <option value="4">QE4</option>
-                        <option value="3">QE3</option>
+                        <option value="QE4">QE4</option>
+                        <option value="QE3">QE3</option>
                     </select>
                 </label>
                 <label>

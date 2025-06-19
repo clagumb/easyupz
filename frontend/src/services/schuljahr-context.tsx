@@ -1,6 +1,5 @@
 import { createContext } from "preact";
-import { useContext, useState } from "preact/hooks";
-import { berechneSchuljahr} from "./berechneSchuljahr.ts";
+import { useContext, useEffect, useState } from "preact/hooks";
 
 type SchuljahrContextType = {
     schuljahr: string;
@@ -10,7 +9,22 @@ type SchuljahrContextType = {
 const SchuljahrContext = createContext<SchuljahrContextType | null>(null);
 
 export function SchuljahrProvider({ children }: { children: preact.ComponentChildren }) {
-    const [schuljahr, setSchuljahr] = useState(berechneSchuljahr());
+    const [schuljahr, setSchuljahr] = useState("");
+
+    useEffect(() => {
+        fetch("/schuljahre/aktiv")
+            .then(res => {
+                if (!res.ok) throw new Error("Aktives Schuljahr konnte nicht geladen werden");
+                return res.json();
+            })
+            .then((data) => {
+                setSchuljahr(data.anzeigeform);
+                console.log(data);
+            })
+            .catch((err) => {
+                console.error("Fehler beim Laden des aktiven Schuljahrs:", err);
+            });
+    }, []);
 
     return (
         <SchuljahrContext.Provider value={{ schuljahr, setSchuljahr }}>
