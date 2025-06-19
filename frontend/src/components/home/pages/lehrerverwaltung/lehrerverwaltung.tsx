@@ -174,7 +174,7 @@ export default function Lehrerverwaltung(_: Props) {
                         onInput={(e) =>
                             setNeuerLehrer({
                                 ...neuerLehrer,
-                                geburtsdatum: dayjs((e.target as HTMLInputElement).value).format("YYYY-MM-DD"),
+                                geburtsdatum: (e.target as HTMLInputElement).value,
                             })
                         }
                         required={true}

@@ -27,7 +27,7 @@ func Init() {
 	DB.Exec(`PRAGMA foreign_keys = ON;`)
 
 	DB.AutoMigrate(&models.Lehrer{}, &models.Benutzer{}, &models.Anrechnung{})
-	if err := DB.AutoMigrate(&models.Lehrer{}, &models.Benutzer{}, &models.Anrechnung{}); err != nil {
+	if err := DB.AutoMigrate(&models.Lehrer{}, &models.Benutzer{}, &models.Anrechnung{}, &models.Schuljahr{}); err != nil {
 		log.Fatalf("AutoMigrate fehlgeschlagen: %v", err)
 	}
 
