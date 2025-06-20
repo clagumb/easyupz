@@ -11,7 +11,7 @@ type Lehrer struct {
 	Geburtsdatum      dateutil.DateOnly `json:"geburtsdatum"`
 	Dienstverhaeltnis string            `gorm:"not null" json:"dienstverhaeltnis"`
 	QE                string            `gorm:"not null" json:"qualifikationsebene"`
-	Stammschule       string            `gorm:"not null" json:"stammschule"`
+	Stammschule       string            `gorm:"not null" json:"schulnummer"`
 }
 
 func (Lehrer) TableName() string {

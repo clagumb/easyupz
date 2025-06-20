@@ -1,7 +1,8 @@
 import "./lehrerverwaltung.css";
-import type {Props} from "../../../types/PathProps.tsx";
+import type {Props} from "../../../types/PathProps.ts";
 import {useEffect, useState} from "preact/hooks";
 import dayjs from "dayjs";
+import { useSchuljahr } from "../../../../services/schuljahr-context.tsx";
 
 type Lehrer = {
     lehrer_id: number;
@@ -10,7 +11,8 @@ type Lehrer = {
     geburtsdatum: string;
     dienstverhaeltnis: string;
     qualifikationsebene: string;
-    stammschule: string;
+    schulnummer: string;
+    kuerzel: string;
 };
 
 type NeuerLehrer = {
@@ -19,7 +21,8 @@ type NeuerLehrer = {
     geburtsdatum: string;
     dienstverhaeltnis: string;
     qualifikationsebene: string;
-    stammschule: string;
+    schulnummer: string;
+    kuerzel: string;
 };
 
 export default function Lehrerverwaltung(_: Props) {
@@ -30,49 +33,69 @@ export default function Lehrerverwaltung(_: Props) {
         geburtsdatum: "",
         dienstverhaeltnis: "",
         qualifikationsebene: "",
-        stammschule: "",
+        schulnummer: "",
+        kuerzel: "",
     });
+    const { schuljahr } = useSchuljahr();
 
     useEffect(() => {
-        fetch("/lehrerverwaltung")
+        if (!schuljahr?.schuljahr_id) return;
+        fetch(`/lehrerverwaltung?schuljahr_id=${schuljahr.schuljahr_id}`)
             .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
             .then((data: Lehrer[]) => setLehrerListe(data))
             .catch((err) => {
                 console.error("Fehler beim Laden der Lehrerliste:", err);
                 alert("Fehler beim Laden der Benutzerdaten.");
             });
-    }, []);
+    }, [schuljahr?.schuljahr_id]);
 
     function handleAdd() {
         if (
             !neuerLehrer.nachname ||
             !neuerLehrer.dienstverhaeltnis ||
             !neuerLehrer.qualifikationsebene ||
-            !neuerLehrer.stammschule
+            !neuerLehrer.schulnummer ||
+            !neuerLehrer.kuerzel
         ) {
-            alert("Bitte Nachname, Dienstverhältnis, Qualifikationseben und Stammschule ausfüllen.");
+            alert("Bitte Nachname, Dienstverhältnis, Qualifikationseben, Stammschule und Kürzel ausfüllen.");
             return;
         }
 
         fetch("/lehrerverwaltung", {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(neuerLehrer),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                ...neuerLehrer,
+                schuljahr
+            }),
         })
             .then(async (res) => {
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error || "Fehler beim Speichern");
                 return data;
             })
-            .then((saved: Lehrer) => {
-                setLehrerListe((prev) => [...prev, saved]);
+            .then((saved) => {
+                const { lehrer, lehrereinsatz } = saved;
+                if (
+                    lehrereinsatz.schuljahr_id === schuljahr?.schuljahr_id &&
+                    lehrereinsatz.schulnummer === lehrer.schulnummer
+                ) {
+                    setLehrerListe((prev) => [
+                        ...prev,
+                        { ...lehrer, kuerzel: lehrereinsatz.kuerzel },
+                    ]);
+                } else {
+                    setLehrerListe((prev) => [...prev, lehrer]);
+                }
+
                 setNeuerLehrer({
                     vorname: "",
                     nachname: "",
                     geburtsdatum: "",
                     dienstverhaeltnis: "",
                     qualifikationsebene: "",
-                    stammschule: "",
+                    schulnummer: "",
+                    kuerzel: "",
                 });
             })
             .catch((err) => {
@@ -92,6 +115,7 @@ export default function Lehrerverwaltung(_: Props) {
                     <th>Dienstverhältnis</th>
                     <th>QE</th>
                     <th>Stammschule</th>
+                    <th>Kürzel&#9733;</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -102,11 +126,13 @@ export default function Lehrerverwaltung(_: Props) {
                         <td data-label="Geburtsdatum">{dayjs(lehrer.geburtsdatum).format("DD.MM.YYYY")}</td>
                         <td data-label="Dienstverhaeltnis">{lehrer.dienstverhaeltnis}</td>
                         <td data-label="Qualifikationsebene">{lehrer.qualifikationsebene}</td>
-                        <td data-label="Stammschuke">{lehrer.stammschule}</td>
+                        <td data-label="Stammschule">{lehrer.schulnummer}</td>
+                        <td data-label="Kuerzel">{lehrer.kuerzel}</td>
                     </tr>
                 ))}
                 </tbody>
             </table>
+            <span className={"fussnote"}>Werte mit &#9733; haben Schuljahresbezug</span>
             <h2>Neue Lehrkraft anlegen</h2>
             <form
                 onSubmit={(e) => {
@@ -199,11 +225,25 @@ export default function Lehrerverwaltung(_: Props) {
                     Schulnummer der Stammschule:
                     <input
                         type="text"
-                        value={neuerLehrer.stammschule}
+                        value={neuerLehrer.schulnummer}
                         onInput={(e) =>
                             setNeuerLehrer({
                                 ...neuerLehrer,
-                                stammschule: (e.target as HTMLInputElement).value,
+                                schulnummer: (e.target as HTMLInputElement).value,
+                            })
+                        }
+                        required={true}
+                    />
+                </label>
+                <label>
+                    Kürzel an der Stammschule:&#9733;
+                    <input
+                        type="text"
+                        value={neuerLehrer.kuerzel}
+                        onInput={(e) =>
+                            setNeuerLehrer({
+                                ...neuerLehrer,
+                                kuerzel: (e.target as HTMLInputElement).value,
                             })
                         }
                         required={true}

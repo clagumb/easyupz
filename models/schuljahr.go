@@ -5,10 +5,10 @@ import (
 )
 
 type Schuljahr struct {
-	ID          uint              `gorm:"primaryKey json:"schujahr_id"`
+	ID          uint              `gorm:"primaryKey" json:"schuljahr_id"`
 	Anzeigeform string            `json:"anzeigeform"`
 	Beginn      dateutil.DateOnly `json:"beginn"`
-	Ende        dateutil.DateOnly `json:"end"`
+	Ende        dateutil.DateOnly `json:"ende"`
 	Aktiv       bool              `json:"aktiv"`
 	Schultage   uint              `json:"schultage"`
 }
