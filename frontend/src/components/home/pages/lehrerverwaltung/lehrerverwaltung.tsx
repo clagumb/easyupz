@@ -1,7 +1,8 @@
 import "./lehrerverwaltung.css";
-import type {Props} from "../../../types/PathProps.tsx";
+import type {Props} from "../../../types/PathProps.ts";
 import {useEffect, useState} from "preact/hooks";
 import dayjs from "dayjs";
+import { useSchuljahr } from "../../../../services/schuljahr-context.tsx";
 
 type Lehrer = {
     lehrer_id: number;
@@ -9,8 +10,9 @@ type Lehrer = {
     nachname: string;
     geburtsdatum: string;
     dienstverhaeltnis: string;
-    qualifikationsebene: number;
-    stammschule: string;
+    qualifikationsebene: string;
+    schulnummer: string;
+    kuerzel: string;
 };
 
 type NeuerLehrer = {
@@ -18,8 +20,9 @@ type NeuerLehrer = {
     nachname: string;
     geburtsdatum: string;
     dienstverhaeltnis: string;
-    qualifikationsebene: number;
-    stammschule: string;
+    qualifikationsebene: string;
+    schulnummer: string;
+    kuerzel: string;
 };
 
 export default function Lehrerverwaltung(_: Props) {
@@ -29,73 +32,70 @@ export default function Lehrerverwaltung(_: Props) {
         nachname: "",
         geburtsdatum: "",
         dienstverhaeltnis: "",
-        qualifikationsebene: 0,
-        stammschule: "",
+        qualifikationsebene: "",
+        schulnummer: "",
+        kuerzel: "",
     });
+    const { schuljahr } = useSchuljahr();
 
     useEffect(() => {
-        fetch("/lehrerverwaltung")
+        if (!schuljahr?.schuljahr_id) return;
+        fetch(`/lehrerverwaltung?schuljahr_id=${schuljahr.schuljahr_id}`)
             .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
             .then((data: Lehrer[]) => setLehrerListe(data))
             .catch((err) => {
                 console.error("Fehler beim Laden der Lehrerliste:", err);
                 alert("Fehler beim Laden der Benutzerdaten.");
             });
-    }, []);
+    }, [schuljahr?.schuljahr_id]);
 
-    /*
-    function handleDelete(id: number) {
-      const benutzer = benutzerListe.find((b) => b.id === id);
-      if (!benutzer) return;
-
-      if (!confirm(`Benutzer "${benutzer.benutzer}" wirklich löschen?`)) return;
-
-      fetch(`/benutzer/${id}`, { method: "DELETE" })
-        .then(async (res) => {
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.error || "Fehler beim Löschen");
-          return data;
-        })
-        .then(() => {
-          setBenutzerListe((prev) => prev.filter((b) => b.id !== id));
-          alert("Benutzer erfolgreich gelöscht.");
-        })
-        .catch((err) => {
-          console.error("Fehler beim Löschen:", err);
-          alert(err.message || "Unbekannter Fehler beim Löschen.");
-        });
-    }
-    */
     function handleAdd() {
         if (
             !neuerLehrer.nachname ||
             !neuerLehrer.dienstverhaeltnis ||
             !neuerLehrer.qualifikationsebene ||
-            !neuerLehrer.stammschule
+            !neuerLehrer.schulnummer ||
+            !neuerLehrer.kuerzel
         ) {
-            alert("Bitte Nachname, Dienstverhältnis, Qualifikationseben und Stammschule ausfüllen.");
+            alert("Bitte Nachname, Dienstverhältnis, Qualifikationseben, Stammschule und Kürzel ausfüllen.");
             return;
         }
 
         fetch("/lehrerverwaltung", {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(neuerLehrer),
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                ...neuerLehrer,
+                schuljahr
+            }),
         })
             .then(async (res) => {
                 const data = await res.json();
                 if (!res.ok) throw new Error(data.error || "Fehler beim Speichern");
                 return data;
             })
-            .then((saved: Lehrer) => {
-                setLehrerListe((prev) => [...prev, saved]);
+            .then((saved) => {
+                const { lehrer, lehrereinsatz } = saved;
+                if (
+                    lehrereinsatz.schuljahr_id === schuljahr?.schuljahr_id &&
+                    lehrereinsatz.schulnummer === lehrer.schulnummer
+                ) {
+                    setLehrerListe((prev) => [
+                        ...prev,
+                        { ...lehrer, kuerzel: lehrereinsatz.kuerzel },
+                    ]);
+                } else {
+                    setLehrerListe((prev) => [...prev, lehrer]);
+                }
+
                 setNeuerLehrer({
                     vorname: "",
                     nachname: "",
                     geburtsdatum: "",
                     dienstverhaeltnis: "",
-                    qualifikationsebene: 0,
-                    stammschule: "",
+                    qualifikationsebene: "",
+                    schulnummer: "",
+                    kuerzel: "",
                 });
             })
             .catch((err) => {
@@ -115,6 +115,7 @@ export default function Lehrerverwaltung(_: Props) {
                     <th>Dienstverhältnis</th>
                     <th>QE</th>
                     <th>Stammschule</th>
+                    <th>Kürzel&#9733;</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -125,11 +126,13 @@ export default function Lehrerverwaltung(_: Props) {
                         <td data-label="Geburtsdatum">{dayjs(lehrer.geburtsdatum).format("DD.MM.YYYY")}</td>
                         <td data-label="Dienstverhaeltnis">{lehrer.dienstverhaeltnis}</td>
                         <td data-label="Qualifikationsebene">{lehrer.qualifikationsebene}</td>
-                        <td data-label="Stammschuke">{lehrer.stammschule}</td>
+                        <td data-label="Stammschule">{lehrer.schulnummer}</td>
+                        <td data-label="Kuerzel">{lehrer.kuerzel}</td>
                     </tr>
                 ))}
                 </tbody>
             </table>
+            <span className={"fussnote"}>Werte mit &#9733; haben Schuljahresbezug</span>
             <h2>Neue Lehrkraft anlegen</h2>
             <form
                 onSubmit={(e) => {
@@ -174,7 +177,7 @@ export default function Lehrerverwaltung(_: Props) {
                         onInput={(e) =>
                             setNeuerLehrer({
                                 ...neuerLehrer,
-                                geburtsdatum: dayjs((e.target as HTMLInputElement).value).format("YYYY-MM-DD"),
+                                geburtsdatum: (e.target as HTMLInputElement).value,
                             })
                         }
                         required={true}
@@ -207,26 +210,40 @@ export default function Lehrerverwaltung(_: Props) {
                         onChange={(e) => {
                             setNeuerLehrer({
                                 ...neuerLehrer,
-                                qualifikationsebene: Number((e.target as HTMLInputElement).value),
+                                qualifikationsebene: (e.target as HTMLInputElement).value,
                             });
                         }}
                     >
                         <option value="" disabled hidden>
-                            Bitte Qualifikationseben wählen
+                            Bitte Qualifikationsebene wählen
                         </option>
-                        <option value="4">QE4</option>
-                        <option value="3">QE3</option>
+                        <option value="QE4">QE4</option>
+                        <option value="QE3">QE3</option>
                     </select>
                 </label>
                 <label>
                     Schulnummer der Stammschule:
                     <input
                         type="text"
-                        value={neuerLehrer.stammschule}
+                        value={neuerLehrer.schulnummer}
                         onInput={(e) =>
                             setNeuerLehrer({
                                 ...neuerLehrer,
-                                stammschule: (e.target as HTMLInputElement).value,
+                                schulnummer: (e.target as HTMLInputElement).value,
+                            })
+                        }
+                        required={true}
+                    />
+                </label>
+                <label>
+                    Kürzel an der Stammschule:&#9733;
+                    <input
+                        type="text"
+                        value={neuerLehrer.kuerzel}
+                        onInput={(e) =>
+                            setNeuerLehrer({
+                                ...neuerLehrer,
+                                kuerzel: (e.target as HTMLInputElement).value,
                             })
                         }
                         required={true}

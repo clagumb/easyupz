@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'preact/hooks';
-import type {Props} from '../../../types/PathProps.tsx';
+import type {Props} from '../../../types/PathProps.ts';
 import './gesamtansicht.css';
 import {route} from "preact-router";
 

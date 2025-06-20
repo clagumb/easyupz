@@ -1,4 +1,4 @@
-import type { Props } from "../types/PathProps.tsx";
+import type { Props } from "../types/PathProps.ts";
 
 import "./home.css";
 

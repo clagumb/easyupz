@@ -1,5 +1,5 @@
 import { useState } from "preact/hooks";
-import type { Props } from '../../../types/PathProps.tsx';
+import type { Props } from '../../../types/PathProps.ts';
 import { useAuth } from '../../../../services/auth-context.tsx'
 import type { JSX } from "preact/jsx-runtime";
 import { route } from "preact-router";
