@@ -73,9 +73,120 @@ func PostLehrerverwaltung(c *gin.Context) {
 		return
 	}
 
-	// Erfolg zurückgeben
 	c.JSON(http.StatusCreated, gin.H{
 		"lehrer":        lehrer,
 		"lehrereinsatz": lehrereinsatz,
 	})
+}
+
+func PatchLehrerverwaltung(c *gin.Context) {
+	castInt, err := strconv.Atoi(c.Param("id"))
+	if err != nil || castInt < 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Ungültige Lehrer-ID"})
+		return
+	}
+	lehrerId := uint(castInt)
+
+	var req dtos.LehrerUpdateRequest
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	update := map[string]interface{}{
+		"vorname":           req.Neu.Vorname,
+		"nachname":          req.Neu.Nachname,
+		"geburtsdatum":      req.Neu.Geburtsdatum,
+		"dienstverhaeltnis": req.Neu.Dienstverhaeltnis,
+		"qe":                req.Neu.Qualifikationsebene,
+		"stammschule":       req.Neu.Schulnummer,
+	}
+
+	if err := services.DB.Model(&models.Lehrer{}).
+		Where("id = ?", lehrerId).
+		Updates(update).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Lehrer konnte nicht aktualisiert werden"})
+		return
+	}
+
+	if req.Alt.Kuerzel != req.Neu.Kuerzel {
+		result := services.DB.
+			Where("lehrer_id = ? AND schuljahr_id = ? AND schulnummer = ? AND kuerzel = ?",
+				lehrerId,
+				req.Neu.Schuljahr.SchuljahrID,
+				req.Alt.Schulnummer,
+				req.Alt.Kuerzel).
+			Delete(&dtos.Lehrereinsatz{})
+
+		if result.Error != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Fehler beim Löschen des bestehenden Lehrereinsatzes"})
+			return
+		}
+
+		neuerEinsatz := dtos.Lehrereinsatz{
+			LehrerID:    lehrerId,
+			SchuljahrID: req.Neu.Schuljahr.SchuljahrID,
+			Schulnummer: req.Neu.Schulnummer,
+			Kuerzel:     req.Neu.Kuerzel,
+		}
+
+		if err := services.DB.Create(&neuerEinsatz).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Neuer Lehrereinsatz konnte nicht gespeichert werden"})
+			return
+		}
+	}
+
+	if req.Alt.Schulnummer != req.Neu.Schulnummer {
+		var einsaetze []dtos.Lehrereinsatz
+
+		if err := services.DB.
+			Where("lehrer_id = ?", lehrerId).Find(&einsaetze).Error; err != nil {
+			services.DB.
+				Rollback()
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Lehrereinsätze konnten nicht geladen werden"})
+			return
+		}
+
+		for _, einsatz := range einsaetze {
+			var count int64
+			services.DB.Model(&dtos.Lehrereinsatz{}).
+				Where("lehrer_id = ? AND schuljahr_id = ? AND kuerzel = ? AND schulnummer = ?",
+					einsatz.LehrerID, einsatz.SchuljahrID, einsatz.Kuerzel, req.Neu.Schulnummer).
+				Count(&count)
+
+			if count > 0 {
+				if err := services.DB.
+					Where("lehrer_id = ? AND schuljahr_id = ? AND kuerzel = ? AND schulnummer = ?",
+						einsatz.LehrerID, einsatz.SchuljahrID, einsatz.Kuerzel, einsatz.Schulnummer).
+					Delete(&dtos.Lehrereinsatz{}).Error; err != nil {
+					services.DB.
+						Rollback()
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "Fehler beim Löschen alter Einsätze"})
+					return
+				}
+				continue
+			}
+
+			if err := services.DB.
+				Where("lehrer_id = ? AND schuljahr_id = ? AND kuerzel = ? AND schulnummer = ?",
+					einsatz.LehrerID, einsatz.SchuljahrID, einsatz.Kuerzel, einsatz.Schulnummer).
+				Delete(&dtos.Lehrereinsatz{}).Error; err != nil {
+				services.DB.
+					Rollback()
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Fehler beim Löschen alter Einsätze"})
+				return
+			}
+
+			einsatz.Schulnummer = req.Neu.Schulnummer
+			if err := services.DB.
+				Create(&einsatz).Error; err != nil {
+				services.DB.
+					Rollback()
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Fehler beim Anlegen neuer Einsätze"})
+				return
+			}
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Lehrer erfolgreich aktualisiert"})
 }

@@ -31,42 +31,58 @@ export default function Header() {
             .catch((err) => console.error("Fehler beim Laden der Schuljahre:", err));
     }, []);
 
-    return (
-        <header style={{gridArea: "header"}}>
-            <NavLink href="/">
-                <img src={fav_icon} alt="Logo" className={"logo"}/>
-            </NavLink>
-            <div className={"header-right"}>
-                <label htmlFor="schuljahr">Schuljahr:</label>
-                <select
-                    id="schuljahr"
-                    value={schuljahr?.anzeigeform ?? ""}
-                    onChange={(e) => {
-                        const ausgewaehlt = alleSchuljahre.find(
-                            (sj) => sj.anzeigeform === e.currentTarget.value
-                        );
-                        if (ausgewaehlt) setSchuljahr(ausgewaehlt);
-                        console.log(ausgewaehlt);
-                    }}
-                >
-                    {alleSchuljahre.map((sj) => (
-                        <option key={sj.schuljahr_id} value={sj.anzeigeform}>
-                            {sj.anzeigeform}
-                        </option>
-                    ))}
-                </select>
+    switch (auth.rolle) {
+        case "admin":
+        case "schulleitung":
+        case "lehrkraft":
+            return (
+                <header style={{gridArea: "header"}}>
+                    <NavLink href="/">
+                        <img src={fav_icon} alt="Logo" className={"logo"}/>
+                    </NavLink>
+                    <div className={"header-right"}>
+                        <label htmlFor="schuljahr">Schuljahr:</label>
+                        <select
+                            id="schuljahr"
+                            value={schuljahr?.anzeigeform ?? ""}
+                            onChange={(e) => {
+                                const ausgewaehlt = alleSchuljahre.find(
+                                    (sj) => sj.anzeigeform === e.currentTarget.value
+                                );
+                                if (ausgewaehlt) setSchuljahr(ausgewaehlt);
+                                console.log(ausgewaehlt);
+                            }}
+                        >
+                            {alleSchuljahre.map((sj) => (
+                                <option key={sj.schuljahr_id} value={sj.anzeigeform}>
+                                    {sj.anzeigeform}
+                                </option>
+                            ))}
+                        </select>
 
-                {auth.eingeloggt ? (
-                    <>
-                        <span>{auth.benutzer}</span>
-                        <button onClick={handleLogout}>Logout</button>
-                    </>
-                ) : (
+                        {auth.eingeloggt ? (
+                            <>
+                                <span>{auth.benutzer}</span>
+                                <button onClick={handleLogout}>Logout</button>
+                            </>
+                        ) : (
+                            <NavLink href="/login">
+                                <button>Login</button>
+                            </NavLink>
+                        )}
+                    </div>
+                </header>
+            );
+        default:
+            return (
+                <header style={{gridArea: "header"}}>
+                    <NavLink href="/">
+                        <img src={fav_icon} alt="Logo" className={"logo"}/>
+                    </NavLink>
                     <NavLink href="/login">
                         <button>Login</button>
                     </NavLink>
-                )}
-            </div>
-        </header>
-    );
+                </header>
+            );
+    }
 }

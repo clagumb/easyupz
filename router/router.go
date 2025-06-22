@@ -48,6 +48,7 @@ func Setup(staticFiles embed.FS, indexHtml []byte) *gin.Engine {
 
 	r.GET("/lehrerverwaltung", handlers.GetLehrerverwaltung)
 	r.POST("/lehrerverwaltung", handlers.PostLehrerverwaltung)
+	r.PATCH("/lehrerverwaltung/:id", handlers.PatchLehrerverwaltung)
 
 	r.GET("/anrechnungen", handlers.GetAnrechnug)
 	r.POST("/anrechnung", handlers.PostAnrechnung)

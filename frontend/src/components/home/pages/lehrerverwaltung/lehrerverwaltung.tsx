@@ -2,7 +2,7 @@ import "./lehrerverwaltung.css";
 import type {Props} from "../../../types/PathProps.ts";
 import {useEffect, useState} from "preact/hooks";
 import dayjs from "dayjs";
-import { useSchuljahr } from "../../../../services/schuljahr-context.tsx";
+import {useSchuljahr} from "../../../../services/schuljahr-context.tsx";
 
 type Lehrer = {
     lehrer_id: number;
@@ -25,6 +25,25 @@ type NeuerLehrer = {
     kuerzel: string;
 };
 
+type LehrerUpdatePayload = {
+    alt: {
+        kuerzel: string;
+        schulnummer: string;
+    };
+    neu: {
+        vorname: string;
+        nachname: string;
+        geburtsdatum: string; // Format: "YYYY-MM-DD"
+        dienstverhaeltnis: string;
+        qualifikationsebene: string;
+        schulnummer: string;
+        kuerzel: string;
+        schuljahr: {
+            schuljahr_id: number;
+        };
+    };
+};
+
 export default function Lehrerverwaltung(_: Props) {
     const [lehrerListe, setLehrerListe] = useState<Lehrer[]>([]);
     const [neuerLehrer, setNeuerLehrer] = useState<NeuerLehrer>({
@@ -36,7 +55,21 @@ export default function Lehrerverwaltung(_: Props) {
         schulnummer: "",
         kuerzel: "",
     });
-    const { schuljahr } = useSchuljahr();
+    const {schuljahr} = useSchuljahr();
+    const [editId, setEditId] = useState<number | null>(null);
+    const [editData, setEditData] = useState<Lehrer | null>(null);
+    const [originalValues, setOriginalValues] = useState({
+        kuerzel: "",
+        schulnummer: "",
+    });
+    const dienstverhaeltnisse = [
+        {value: "ab", label: "angestellt befristet (ab)"},
+        {value: "bl", label: "Beamter auf Lebenszeit (bl)"},
+    ];
+    const qualifikationsebene = [
+        {value: "QE4", label: "QE4"},
+        {value: "QE3", label: "QE3"},
+    ];
 
     useEffect(() => {
         if (!schuljahr?.schuljahr_id) return;
@@ -63,7 +96,7 @@ export default function Lehrerverwaltung(_: Props) {
 
         fetch("/lehrerverwaltung", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
                 ...neuerLehrer,
                 schuljahr
@@ -75,14 +108,14 @@ export default function Lehrerverwaltung(_: Props) {
                 return data;
             })
             .then((saved) => {
-                const { lehrer, lehrereinsatz } = saved;
+                const {lehrer, lehrereinsatz} = saved;
                 if (
                     lehrereinsatz.schuljahr_id === schuljahr?.schuljahr_id &&
                     lehrereinsatz.schulnummer === lehrer.schulnummer
                 ) {
                     setLehrerListe((prev) => [
                         ...prev,
-                        { ...lehrer, kuerzel: lehrereinsatz.kuerzel },
+                        {...lehrer, kuerzel: lehrereinsatz.kuerzel},
                     ]);
                 } else {
                     setLehrerListe((prev) => [...prev, lehrer]);
@@ -103,6 +136,37 @@ export default function Lehrerverwaltung(_: Props) {
             });
     }
 
+    function handleSave(editData: Lehrer) {
+        const {lehrer_id, ...rest} = editData;
+        const payload: LehrerUpdatePayload = {
+            alt: originalValues,
+            neu: {
+                ...rest,
+                schuljahr: {
+                    schuljahr_id: schuljahr?.schuljahr_id!,
+                },
+            },
+        };
+
+        fetch(`/lehrerverwaltung/${lehrer_id}`, {
+            method: "PATCH",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload),
+        })
+            .then((res) => {
+                if (!res.ok) throw new Error("Fehler beim Speichern");
+                return fetch(`/lehrerverwaltung?schuljahr_id=${schuljahr?.schuljahr_id}`);
+            })
+            .then((res) => res.json())
+            .then((data: Lehrer[]) => {
+                setLehrerListe(data);
+                setEditId(null);
+            })
+            .catch((err) => {
+                alert("Speichern fehlgeschlagen: " + err.message);
+            });
+    }
+
     return (
         <>
             <h1>Lehrerverwaltung</h1>
@@ -116,18 +180,133 @@ export default function Lehrerverwaltung(_: Props) {
                     <th>QE</th>
                     <th>Stammschule</th>
                     <th>Kürzel&#9733;</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 {lehrerListe.map((lehrer: Lehrer) => (
-                    <tr key={lehrer.lehrer_id}>
-                        <td data-label="Vorname">{lehrer.vorname}</td>
-                        <td data-label="Nachname">{lehrer.nachname}</td>
-                        <td data-label="Geburtsdatum">{dayjs(lehrer.geburtsdatum).format("DD.MM.YYYY")}</td>
-                        <td data-label="Dienstverhaeltnis">{lehrer.dienstverhaeltnis}</td>
-                        <td data-label="Qualifikationsebene">{lehrer.qualifikationsebene}</td>
-                        <td data-label="Stammschule">{lehrer.schulnummer}</td>
-                        <td data-label="Kuerzel">{lehrer.kuerzel}</td>
+                    <tr key={lehrer.lehrer_id}
+                        onDblClick={() => {
+                            setEditId(lehrer.lehrer_id);
+                            setOriginalValues({
+                                kuerzel: lehrer.kuerzel,
+                                schulnummer: lehrer.schulnummer,
+                            });
+                            setEditData({...lehrer});
+                        }}
+                    >
+                        {editId === lehrer.lehrer_id ? (
+                            <>
+                                <td>
+                                    <input
+                                        value={editData?.vorname ?? ""}
+                                        onInput={(e) =>
+                                            editData && setEditData({...editData, vorname: e.currentTarget.value})
+                                        }
+                                        style={{width: "15ch"}}
+                                        required={false}
+                                    />
+                                </td>
+                                <td>
+                                    <input
+                                        value={editData?.nachname ?? ""}
+                                        onInput={(e) =>
+                                            editData && setEditData({...editData, nachname: e.currentTarget.value})
+                                        }
+                                        style={{width: "15ch"}}
+                                        required={true}
+                                    />
+                                </td>
+                                <td>
+                                    <input
+                                        type="date"
+                                        value={editData?.geburtsdatum
+                                            ? dayjs(editData.geburtsdatum).format("YYYY-MM-DD")
+                                            : ""}
+                                        onInput={(e) =>
+                                            editData && setEditData({...editData, geburtsdatum: e.currentTarget.value})
+                                        }
+                                        required={true}
+                                    />
+                                </td>
+                                <td>
+                                    <select
+                                        value={editData?.dienstverhaeltnis ?? ""}
+                                        onInput={(e) =>
+                                            editData && setEditData({
+                                                ...editData,
+                                                dienstverhaeltnis: e.currentTarget.value
+                                            })
+                                        }
+                                        required={true}
+                                    >
+                                        {dienstverhaeltnisse.map((opt) => (
+                                            <option key={opt.value} value={opt.value}>
+                                                {opt.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </td>
+                                <td>
+                                    <select
+                                        value={editData?.qualifikationsebene ?? ""}
+                                        onInput={(e) =>
+                                            editData && setEditData({
+                                                ...editData,
+                                                qualifikationsebene: e.currentTarget.value
+                                            })
+                                        }
+                                        required={true}
+                                    >
+                                        {qualifikationsebene.map((opt) => (
+                                            <option key={opt.value} value={opt.value}>
+                                                {opt.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </td>
+                                <td>
+                                    <input
+                                        value={editData?.schulnummer ?? ""}
+                                        onInput={(e) =>
+                                            editData && setEditData({...editData, schulnummer: e.currentTarget.value})
+                                        }
+                                        inputMode="numeric"
+                                        pattern="\d*"
+                                        maxLength={5}
+                                        style={{width: "6ch"}}
+                                        required={true}
+                                    />
+                                </td>
+                                <td>
+                                    <input
+                                        value={editData?.kuerzel ?? ""}
+                                        onInput={(e) =>
+                                            editData && setEditData({...editData, kuerzel: e.currentTarget.value})
+                                        }
+                                        style={{width: "6ch"}}
+                                        required={true}
+                                    />
+                                </td>
+                                <td>
+                                    <button className={"hinzufuegen-button"}
+                                            onClick={() => editData && handleSave(editData)}>💾
+                                    </button>
+                                    <button className={"hinzufuegen-button"} onClick={() => setEditId(null)}>❌</button>
+                                </td>
+                            </>
+                        ) : (
+                            <>
+                                <td>{lehrer.vorname}</td>
+                                <td>{lehrer.nachname}</td>
+                                <td>{dayjs(lehrer.geburtsdatum).format("DD.MM.YYYY")}</td>
+                                <td>{lehrer.dienstverhaeltnis}</td>
+                                <td>{lehrer.qualifikationsebene}</td>
+                                <td>{lehrer.schulnummer}</td>
+                                <td>{lehrer.kuerzel}</td>
+                                <td></td>
+                            </>
+                        )}
                     </tr>
                 ))}
                 </tbody>
@@ -198,8 +377,14 @@ export default function Lehrerverwaltung(_: Props) {
                         <option value="" disabled hidden>
                             Bitte Dienstverhältnis wählen
                         </option>
-                        <option value="ab">angestellt befristet (ab)</option>
-                        <option value="bl">Beamter auf Lebenzeit (bl)</option>
+                        {dienstverhaeltnisse.map((opt) => (
+                            <option
+                                key={opt.value}
+                                value={opt.value}
+                            >
+                                {opt.label}
+                            </option>
+                        ))}
                     </select>
                 </label>
                 <label>
@@ -217,8 +402,14 @@ export default function Lehrerverwaltung(_: Props) {
                         <option value="" disabled hidden>
                             Bitte Qualifikationsebene wählen
                         </option>
-                        <option value="QE4">QE4</option>
-                        <option value="QE3">QE3</option>
+                        {qualifikationsebene.map((opt) => (
+                            <option
+                                key={opt.value}
+                                value={opt.value}
+                            >
+                                {opt.label}
+                            </option>
+                        ))}
                     </select>
                 </label>
                 <label>
@@ -232,6 +423,9 @@ export default function Lehrerverwaltung(_: Props) {
                                 schulnummer: (e.target as HTMLInputElement).value,
                             })
                         }
+                        inputMode="numeric"
+                        pattern="\d*"
+                        maxLength={5}
                         required={true}
                     />
                 </label>
