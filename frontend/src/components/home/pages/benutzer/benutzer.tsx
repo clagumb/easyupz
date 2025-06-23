@@ -204,7 +204,7 @@ export default function Benutzer(_: Props) {
             />
           </label>
         )}
-        <button type="submit" className="hinzufuegen-button">
+        <button type="submit" className="back-button">
           ➕
         </button>
       </form>

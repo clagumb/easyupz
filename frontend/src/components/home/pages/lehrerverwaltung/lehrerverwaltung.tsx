@@ -72,15 +72,17 @@ export default function Lehrerverwaltung(_: Props) {
     ];
 
     useEffect(() => {
-        if (!schuljahr?.schuljahr_id) return;
-        fetch(`/lehrerverwaltung?schuljahr_id=${schuljahr.schuljahr_id}`)
+        const id = schuljahr?.schuljahr_id;
+        if (!id) return;
+
+        fetch(`/lehrerverwaltung?schuljahr_id=${id}`)
             .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
             .then((data: Lehrer[]) => setLehrerListe(data))
             .catch((err) => {
                 console.error("Fehler beim Laden der Lehrerliste:", err);
                 alert("Fehler beim Laden der Benutzerdaten.");
             });
-    }, [schuljahr?.schuljahr_id]);
+    }, [schuljahr]);
 
     function handleAdd() {
         if (
@@ -289,10 +291,10 @@ export default function Lehrerverwaltung(_: Props) {
                                     />
                                 </td>
                                 <td>
-                                    <button className={"hinzufuegen-button"}
+                                    <button className={"back-button"}
                                             onClick={() => editData && handleSave(editData)}>💾
                                     </button>
-                                    <button className={"hinzufuegen-button"} onClick={() => setEditId(null)}>❌</button>
+                                    <button className={"back-button"} onClick={() => setEditId(null)}>❌</button>
                                 </td>
                             </>
                         ) : (
@@ -443,7 +445,7 @@ export default function Lehrerverwaltung(_: Props) {
                         required={true}
                     />
                 </label>
-                <button type="submit" className="hinzufuegen-button">
+                <button type="submit" className="back-button">
                     ➕
                 </button>
             </form>

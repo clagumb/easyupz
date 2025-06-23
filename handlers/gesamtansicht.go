@@ -16,15 +16,3 @@ func GetGesamtansicht(c *gin.Context) {
 		Scan(&daten)
 	c.JSON(200, daten)
 }
-
-/*
-func PostLehrer(c *gin.Context) {
-	var neuer models.Lehrer
-	if err := c.BindJSON(&neuer); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	services.DB.Create(&neuer)
-	c.JSON(http.StatusCreated, neuer)
-}
-*/

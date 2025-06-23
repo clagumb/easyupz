@@ -1,6 +1,7 @@
+import './gesamtansicht.css';
+
 import {useEffect, useState} from 'preact/hooks';
 import type {Props} from '../../../types/PathProps.ts';
-import './gesamtansicht.css';
 import {route} from "preact-router";
 
 type Lehrer = {
@@ -18,9 +19,23 @@ export default function Gesamtansicht(_: Props) {
             .then((data: Lehrer[]) => setLehrerListe(data))
             .catch((err) => console.error('Fehler beim Laden der Lehrerliste:', err));
     }, []);
+
+    useEffect(() => {
+        const savedY = sessionStorage.getItem("scrollY");
+        const main = document.querySelector("main");
+
+        if (savedY && main && lehrerListe.length > 0) {
+            main.scrollTop = parseInt(savedY);
+            sessionStorage.removeItem("scrollY");
+        }
+    }, [lehrerListe]);
+
     const handleDoubleClick = (id: number) => {
-        alert(id);
-        route(`/lehrer/${id}`);
+        const main = document.querySelector("main");
+        if (main) {
+            sessionStorage.setItem("scrollY", main.scrollTop.toString());
+        }
+        route(`/einzelansicht/${id}`);
     };
 
     return (

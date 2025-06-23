@@ -1,3 +1,5 @@
+import './app.css';
+
 import { Router } from 'preact-router';
 import AuthProvider from './services/auth-context';
 import { SchuljahrProvider } from './services/schuljahr-context'; // Pfad anpassen
@@ -9,7 +11,7 @@ import Gesamtansicht from './components/home/pages/gesamtansicht/gesamtansicht';
 import Benutzer from './components/home/pages/benutzer/benutzer';
 import Lehrerverwaltung from './components/home/pages/lehrerverwaltung/lehrerverwaltung';
 import Login from './components/home/pages/login/login';
-import './app.css';
+import Einzelansicht from "./components/home/pages/einzelansicht/einzelansicht.tsx";
 
 export function App() {
   return (
@@ -25,6 +27,7 @@ export function App() {
                 <Gesamtansicht path="/gesamtansicht" />
                 <Benutzer path="/benutzer" />
                 <Lehrerverwaltung path="/lehrerverwaltung" />
+                <Einzelansicht path="/einzelansicht/:id" />
               </Router>
             </main>
             <Footer />

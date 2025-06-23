@@ -1,0 +1,16 @@
+.back-button {
+    background: transparent;
+    border: none;
+    color: inherit;
+    justify-self: start;
+    font-size: 0.8rem;
+    width: fit-content;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.1s ease;
+    margin-top: 20px;
+}
+
+.back-button:hover {
+    transform: scale(1.05);
+}

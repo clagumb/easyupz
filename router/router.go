@@ -43,6 +43,8 @@ func Setup(staticFiles embed.FS, indexHtml []byte) *gin.Engine {
 
 	r.GET("/gesamtansicht", handlers.GetGesamtansicht)
 
+	r.GET("/einzelansicht/:id", handlers.GetEinzelansicht)
+
 	r.GET("/schuljahre", handlers.GetAlleSchuljahre)
 	r.GET("/schuljahre/aktiv", handlers.GetAktivesSchuljahr)
 
