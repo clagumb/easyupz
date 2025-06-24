@@ -3,10 +3,9 @@ import {route} from "preact-router";
 import {useSchuljahr} from "../../../../services/schuljahr-context.tsx";
 
 type Lehrer = {
-    lehrer_id: number;
-    schuljahr: string;
     vorname: string;
     nachname: string;
+    kuerzel: string;
 };
 
 export default function Einzelansicht(props: any) {
@@ -47,10 +46,9 @@ export default function Einzelansicht(props: any) {
     return (
         <>
             <h2>Einzelansicht</h2>
-            <p><strong>ID in Datenbank:</strong> {lehrer.lehrer_id}</p>
-            <p><strong>Schuljahr:</strong> {lehrer.schuljahr}</p>
             <p><strong>Vorname:</strong> {lehrer.vorname}</p>
             <p><strong>Nachname:</strong> {lehrer.nachname}</p>
+            <p><strong>Kürzel&#9733;:</strong> {lehrer.kuerzel || "Kein Kürzel vorhanden!" }</p>
             <button
                 onClick={() => route('/gesamtansicht')}
                 className="back-button"

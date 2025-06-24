@@ -9,7 +9,7 @@ export default function Aside() {
         case "admin":
             return (
                 <aside style={{gridArea: "sidebar"}}>
-                    <p>Unterrichtspflichtszeit</p>
+                    <p>Unterrichtspflichtzeit</p>
                     <NavLink href="/gesamtansicht" className={"button-link"}>Gesamtansicht</NavLink>
                     <p className={"big-spacer"}>Administration</p>
                     <NavLink href="/lehrerverwaltung" className={"button-link"}>Lehrerverwaltung</NavLink>
@@ -20,7 +20,7 @@ export default function Aside() {
         case "schulleitung":
             return (
                 <aside style={{gridArea: "sidebar"}}>
-                    <p>Unterrichtspflichtszeit</p>
+                    <p>Unterrichtspflichtzeit</p>
                     Für angemeldete Mitglieder der Schulleitung
                 </aside>
             );
@@ -28,7 +28,7 @@ export default function Aside() {
         case "lehrkraft":
             return (
                 <aside style={{gridArea: "sidebar"}}>
-                    <p>Unterrichtspflichtszeit</p>
+                    <p>Unterrichtspflichtzeit</p>
                     Für angemeldete Lehrkräfte
                 </aside>
             );
@@ -36,7 +36,7 @@ export default function Aside() {
         default:
             return (
                 <aside style={{gridArea: "sidebar"}}>
-                    Unterrichtspflichtszeit<br/>
+                    Unterrichtspflichtzeit<br/>
                 </aside>
             );
     }

@@ -5,8 +5,10 @@ import (
 	"easyupz/models"
 	"easyupz/services"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 func GetLehrerverwaltung(c *gin.Context) {
@@ -47,36 +49,45 @@ func PostLehrerverwaltung(c *gin.Context) {
 		return
 	}
 
-	lehrer := models.Lehrer{
-		Vorname:           req.Vorname,
-		Nachname:          req.Nachname,
-		Geburtsdatum:      req.Geburtsdatum,
-		Dienstverhaeltnis: req.Dienstverhaeltnis,
-		QE:                req.QE,
-		Stammschule:       req.Stammschule,
-	}
+	err := services.DB.Transaction(func(tx *gorm.DB) error {
+		lehrer := models.Lehrer{
+			Vorname:           req.Vorname,
+			Nachname:          req.Nachname,
+			Geburtsdatum:      req.Geburtsdatum,
+			Dienstverhaeltnis: req.Dienstverhaeltnis,
+			QE:                req.QE,
+			Stammschule:       req.Stammschule,
+		}
 
-	if err := services.DB.Create(&lehrer).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Lehrer konnte nicht gespeichert werden"})
-		return
-	}
+		if err := tx.Create(&lehrer).Error; err != nil {
+			return err
+		}
 
-	lehrereinsatz := dtos.Lehrereinsatz{
-		LehrerID:    lehrer.ID,
-		SchuljahrID: req.Schuljahr.SchuljahrID,
-		Kuerzel:     req.Kuerzel,
-		Schulnummer: req.Stammschule,
-	}
+		lehrereinsatz := dtos.Lehrereinsatz{
+			LehrerID:    lehrer.ID,
+			SchuljahrID: req.Schuljahr.SchuljahrID,
+			Kuerzel:     req.Kuerzel,
+			Schulnummer: req.Stammschule,
+		}
 
-	if err := services.DB.Create(&lehrereinsatz).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Lehrereinsatz konnte nicht gespeichert werden"})
-		return
-	}
+		if err := tx.Create(&lehrereinsatz).Error; err != nil {
+			return err
+		}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"lehrer":        lehrer,
-		"lehrereinsatz": lehrereinsatz,
+		c.JSON(http.StatusCreated, gin.H{
+			"lehrer":        lehrer,
+			"lehrereinsatz": lehrereinsatz,
+		})
+		return nil
 	})
+
+	if err != nil {
+		if strings.Contains(err.Error(), "UNIQUE constraint failed") {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Kürzel bereits vergeben!"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Fehler beim Speichern"})
+		}
+	}
 }
 
 func PatchLehrerverwaltung(c *gin.Context) {
@@ -131,30 +142,46 @@ func PatchLehrerverwaltung(c *gin.Context) {
 		}
 
 		if err := services.DB.Create(&neuerEinsatz).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Neuer Lehrereinsatz konnte nicht gespeichert werden"})
-			return
-		}
-	}
-
-	if req.Alt.Schulnummer != req.Neu.Schulnummer {
-		var einsaetze []dtos.Lehrereinsatz
-
-		if err := services.DB.
-			Where("lehrer_id = ?", lehrerId).Find(&einsaetze).Error; err != nil {
-			services.DB.
-				Rollback()
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Lehrereinsätze konnten nicht geladen werden"})
-			return
+			if strings.Contains(err.Error(), "UNIQUE constraint failed") {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Kürzel bereits vergeben!"})
+				return
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Neuer Lehrereinsatz konnte nicht gespeichert werden"})
+				return
+			}
 		}
 
-		for _, einsatz := range einsaetze {
-			var count int64
-			services.DB.Model(&dtos.Lehrereinsatz{}).
-				Where("lehrer_id = ? AND schuljahr_id = ? AND kuerzel = ? AND schulnummer = ?",
-					einsatz.LehrerID, einsatz.SchuljahrID, einsatz.Kuerzel, req.Neu.Schulnummer).
-				Count(&count)
+		if req.Alt.Schulnummer != req.Neu.Schulnummer {
+			var einsaetze []dtos.Lehrereinsatz
 
-			if count > 0 {
+			if err := services.DB.
+				Where("lehrer_id = ?", lehrerId).Find(&einsaetze).Error; err != nil {
+				services.DB.
+					Rollback()
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Lehrereinsätze konnten nicht geladen werden"})
+				return
+			}
+
+			for _, einsatz := range einsaetze {
+				var count int64
+				services.DB.Model(&dtos.Lehrereinsatz{}).
+					Where("lehrer_id = ? AND schuljahr_id = ? AND kuerzel = ? AND schulnummer = ?",
+						einsatz.LehrerID, einsatz.SchuljahrID, einsatz.Kuerzel, req.Neu.Schulnummer).
+					Count(&count)
+
+				if count > 0 {
+					if err := services.DB.
+						Where("lehrer_id = ? AND schuljahr_id = ? AND kuerzel = ? AND schulnummer = ?",
+							einsatz.LehrerID, einsatz.SchuljahrID, einsatz.Kuerzel, einsatz.Schulnummer).
+						Delete(&dtos.Lehrereinsatz{}).Error; err != nil {
+						services.DB.
+							Rollback()
+						c.JSON(http.StatusInternalServerError, gin.H{"error": "Fehler beim Löschen alter Einsätze"})
+						return
+					}
+					continue
+				}
+
 				if err := services.DB.
 					Where("lehrer_id = ? AND schuljahr_id = ? AND kuerzel = ? AND schulnummer = ?",
 						einsatz.LehrerID, einsatz.SchuljahrID, einsatz.Kuerzel, einsatz.Schulnummer).
@@ -164,29 +191,17 @@ func PatchLehrerverwaltung(c *gin.Context) {
 					c.JSON(http.StatusInternalServerError, gin.H{"error": "Fehler beim Löschen alter Einsätze"})
 					return
 				}
-				continue
-			}
 
-			if err := services.DB.
-				Where("lehrer_id = ? AND schuljahr_id = ? AND kuerzel = ? AND schulnummer = ?",
-					einsatz.LehrerID, einsatz.SchuljahrID, einsatz.Kuerzel, einsatz.Schulnummer).
-				Delete(&dtos.Lehrereinsatz{}).Error; err != nil {
-				services.DB.
-					Rollback()
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Fehler beim Löschen alter Einsätze"})
-				return
-			}
-
-			einsatz.Schulnummer = req.Neu.Schulnummer
-			if err := services.DB.
-				Create(&einsatz).Error; err != nil {
-				services.DB.
-					Rollback()
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Fehler beim Anlegen neuer Einsätze"})
-				return
+				einsatz.Schulnummer = req.Neu.Schulnummer
+				if err := services.DB.
+					Create(&einsatz).Error; err != nil {
+					services.DB.
+						Rollback()
+					c.JSON(http.StatusInternalServerError, gin.H{"error": "Fehler beim Anlegen neuer Einsätze"})
+					return
+				}
 			}
 		}
+		c.JSON(http.StatusOK, gin.H{"message": "Lehrer erfolgreich aktualisiert"})
 	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "Lehrer erfolgreich aktualisiert"})
 }

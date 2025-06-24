@@ -23,17 +23,11 @@ func GetEinzelansicht(c *gin.Context) {
 	}
 	schuljahrId := uint(castInt)
 
-	var schuljahrText string
-	if schuljahrId == 1 {
-		schuljahrText = "2024/25"
-	} else {
-		schuljahrText = "2025/26"
-	}
-
 	var data dtos.Einzelansicht
 	err = services.DB.
 		Table("lehrer").
-		Select("lehrer.id, lehrer.vorname, lehrer.nachname").
+		Select("lehrer.vorname, lehrer.nachname, lehrereinsatz.kuerzel").
+		Joins("LEFT JOIN lehrereinsatz ON lehrereinsatz.lehrer_id = lehrer.id AND lehrereinsatz.schuljahr_id = ?", schuljahrId).
 		Where("lehrer.id = ?", lehrerId).
 		Scan(&data).Error
 
@@ -42,6 +36,5 @@ func GetEinzelansicht(c *gin.Context) {
 		return
 	}
 
-	data.Schuljahr = schuljahrText
 	c.JSON(http.StatusOK, data)
 }

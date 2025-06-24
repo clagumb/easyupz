@@ -86,13 +86,14 @@ export default function Lehrerverwaltung(_: Props) {
 
     function handleAdd() {
         if (
+            !neuerLehrer.vorname ||
             !neuerLehrer.nachname ||
             !neuerLehrer.dienstverhaeltnis ||
             !neuerLehrer.qualifikationsebene ||
             !neuerLehrer.schulnummer ||
             !neuerLehrer.kuerzel
         ) {
-            alert("Bitte Nachname, Dienstverhältnis, Qualifikationseben, Stammschule und Kürzel ausfüllen.");
+            alert("Bitte alle Felder ausfüllen.");
             return;
         }
 
@@ -139,6 +140,19 @@ export default function Lehrerverwaltung(_: Props) {
     }
 
     function handleSave(editData: Lehrer) {
+        if (
+            !editData.vorname?.trim() ||
+            !editData.nachname?.trim() ||
+            !editData.geburtsdatum?.trim() ||
+            !editData.dienstverhaeltnis?.trim() ||
+            !editData.qualifikationsebene?.trim() ||
+            !editData.schulnummer?.trim() ||
+            !editData.kuerzel?.trim()
+        ) {
+            alert("Bitte alle Felder ausfüllen.");
+            return;
+        }
+
         const {lehrer_id, ...rest} = editData;
         const payload: LehrerUpdatePayload = {
             alt: originalValues,
@@ -155,8 +169,11 @@ export default function Lehrerverwaltung(_: Props) {
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(payload),
         })
-            .then((res) => {
-                if (!res.ok) throw new Error("Fehler beim Speichern");
+            .then(async (res) => {
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.error || "Fehler beim Speichern");
+                }
                 return fetch(`/lehrerverwaltung?schuljahr_id=${schuljahr?.schuljahr_id}`);
             })
             .then((res) => res.json())
@@ -205,8 +222,12 @@ export default function Lehrerverwaltung(_: Props) {
                                         onInput={(e) =>
                                             editData && setEditData({...editData, vorname: e.currentTarget.value})
                                         }
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                                e.currentTarget.blur();
+                                            }
+                                        }}
                                         style={{width: "15ch"}}
-                                        required={false}
                                     />
                                 </td>
                                 <td>
@@ -215,8 +236,12 @@ export default function Lehrerverwaltung(_: Props) {
                                         onInput={(e) =>
                                             editData && setEditData({...editData, nachname: e.currentTarget.value})
                                         }
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                                e.currentTarget.blur();
+                                            }
+                                        }}
                                         style={{width: "15ch"}}
-                                        required={true}
                                     />
                                 </td>
                                 <td>
@@ -228,7 +253,6 @@ export default function Lehrerverwaltung(_: Props) {
                                         onInput={(e) =>
                                             editData && setEditData({...editData, geburtsdatum: e.currentTarget.value})
                                         }
-                                        required={true}
                                     />
                                 </td>
                                 <td>
@@ -240,7 +264,6 @@ export default function Lehrerverwaltung(_: Props) {
                                                 dienstverhaeltnis: e.currentTarget.value
                                             })
                                         }
-                                        required={true}
                                     >
                                         {dienstverhaeltnisse.map((opt) => (
                                             <option key={opt.value} value={opt.value}>
@@ -258,7 +281,6 @@ export default function Lehrerverwaltung(_: Props) {
                                                 qualifikationsebene: e.currentTarget.value
                                             })
                                         }
-                                        required={true}
                                     >
                                         {qualifikationsebene.map((opt) => (
                                             <option key={opt.value} value={opt.value}>
@@ -273,11 +295,15 @@ export default function Lehrerverwaltung(_: Props) {
                                         onInput={(e) =>
                                             editData && setEditData({...editData, schulnummer: e.currentTarget.value})
                                         }
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                                e.currentTarget.blur();
+                                            }
+                                        }}
                                         inputMode="numeric"
                                         pattern="\d*"
                                         maxLength={5}
                                         style={{width: "6ch"}}
-                                        required={true}
                                     />
                                 </td>
                                 <td>
@@ -286,8 +312,12 @@ export default function Lehrerverwaltung(_: Props) {
                                         onInput={(e) =>
                                             editData && setEditData({...editData, kuerzel: e.currentTarget.value})
                                         }
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") {
+                                                e.currentTarget.blur();
+                                            }
+                                        }}
                                         style={{width: "6ch"}}
-                                        required={true}
                                     />
                                 </td>
                                 <td>
@@ -333,7 +363,7 @@ export default function Lehrerverwaltung(_: Props) {
                                 vorname: (e.target as HTMLInputElement).value,
                             })
                         }
-                        required={false}
+                        required={true}
                     />
                 </label>
                 <label>

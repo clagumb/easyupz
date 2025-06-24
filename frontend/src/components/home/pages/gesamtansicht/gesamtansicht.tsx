@@ -51,12 +51,12 @@ export default function Gesamtansicht(_: Props) {
                 </thead>
                 <tbody>
                 {lehrerListe.map((lehrer) => (
-                    <tr key={lehrer.lehrer_id}>
+                    <tr key={lehrer.lehrer_id}
+                        onDblClick={() => handleDoubleClick(lehrer.lehrer_id)}
+                        style={{cursor: 'pointer'}}
+                    >
                         <td>{lehrer.lehrer_vorname}</td>
-                        <td
-                            onDblClick={() => handleDoubleClick(lehrer.lehrer_id)}
-                            style={{cursor: 'pointer'}}
-                        >{lehrer.lehrer_nachname}
+                        <td>{lehrer.lehrer_nachname}
                         </td>
                     </tr>
                 ))}
