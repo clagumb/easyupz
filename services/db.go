@@ -33,7 +33,8 @@ func Init() {
 		&models.Lehrereinsatz{},
 		&models.Ermaessigung{},
 		&models.Upz{},
-		&models.Reduzierung{}); err != nil {
+		&models.Reduzierung{},
+		&models.Wochenfaktor{}); err != nil {
 		log.Fatalf("AutoMigrate fehlgeschlagen: %v", err)
 	}
 
