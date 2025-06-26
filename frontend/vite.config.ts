@@ -30,7 +30,11 @@ export default defineConfig({
                 target: 'http://127.0.0.1:8080',
                 changeOrigin: true,
             },
-            '/anrechnungen': {
+            '/anrechnung': {
+                target: 'http://127.0.0.1:8080',
+                changeOrigin: true,
+            },
+            '/ermaessigung': {
                 target: 'http://127.0.0.1:8080',
                 changeOrigin: true,
             },

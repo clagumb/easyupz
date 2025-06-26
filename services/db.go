@@ -1,7 +1,6 @@
 package services
 
 import (
-	"easyupz/dtos"
 	"easyupz/models"
 	"fmt"
 	"log"
@@ -27,7 +26,14 @@ func Init() {
 
 	DB.Exec(`PRAGMA foreign_keys = ON;`)
 
-	if err := DB.AutoMigrate(&models.Lehrer{}, &models.Benutzer{}, &models.Anrechnung{}, &models.Schuljahr{}, &dtos.Lehrereinsatz{}); err != nil {
+	if err := DB.AutoMigrate(&models.Lehrer{},
+		&models.Benutzer{},
+		&models.Anrechnung{},
+		&models.Schuljahr{},
+		&models.Lehrereinsatz{},
+		&models.Ermaessigung{},
+		&models.Upz{},
+		&models.Reduzierung{}); err != nil {
 		log.Fatalf("AutoMigrate fehlgeschlagen: %v", err)
 	}
 

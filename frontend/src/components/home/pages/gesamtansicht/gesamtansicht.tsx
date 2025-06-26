@@ -6,8 +6,8 @@ import {route} from "preact-router";
 
 type Lehrer = {
     lehrer_id: number;
-    lehrer_vorname: string;
-    lehrer_nachname: string;
+    vorname: string;
+    nachname: string;
 };
 
 export default function Gesamtansicht(_: Props) {
@@ -47,6 +47,9 @@ export default function Gesamtansicht(_: Props) {
                 <tr>
                     <th>Vorname</th>
                     <th>Nachname</th>
+                    <th>SOLL</th>
+                    <th>IST</th>
+                    <th>Differenz</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -55,9 +58,11 @@ export default function Gesamtansicht(_: Props) {
                         onDblClick={() => handleDoubleClick(lehrer.lehrer_id)}
                         style={{cursor: 'pointer'}}
                     >
-                        <td>{lehrer.lehrer_vorname}</td>
-                        <td>{lehrer.lehrer_nachname}
-                        </td>
+                        <td>{lehrer.vorname}</td>
+                        <td>{lehrer.nachname}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     </tr>
                 ))}
                 </tbody>

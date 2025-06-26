@@ -63,7 +63,7 @@ func PostLehrerverwaltung(c *gin.Context) {
 			return err
 		}
 
-		lehrereinsatz := dtos.Lehrereinsatz{
+		lehrereinsatz := models.Lehrereinsatz{
 			LehrerID:    lehrer.ID,
 			SchuljahrID: req.Schuljahr.SchuljahrID,
 			Kuerzel:     req.Kuerzel,
@@ -127,14 +127,14 @@ func PatchLehrerverwaltung(c *gin.Context) {
 				req.Neu.Schuljahr.SchuljahrID,
 				req.Alt.Schulnummer,
 				req.Alt.Kuerzel).
-			Delete(&dtos.Lehrereinsatz{})
+			Delete(&models.Lehrereinsatz{})
 
 		if result.Error != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Fehler beim Löschen des bestehenden Lehrereinsatzes"})
 			return
 		}
 
-		neuerEinsatz := dtos.Lehrereinsatz{
+		neuerEinsatz := models.Lehrereinsatz{
 			LehrerID:    lehrerId,
 			SchuljahrID: req.Neu.Schuljahr.SchuljahrID,
 			Schulnummer: req.Neu.Schulnummer,
@@ -152,7 +152,7 @@ func PatchLehrerverwaltung(c *gin.Context) {
 		}
 
 		if req.Alt.Schulnummer != req.Neu.Schulnummer {
-			var einsaetze []dtos.Lehrereinsatz
+			var einsaetze []models.Lehrereinsatz
 
 			if err := services.DB.
 				Where("lehrer_id = ?", lehrerId).Find(&einsaetze).Error; err != nil {
@@ -164,7 +164,7 @@ func PatchLehrerverwaltung(c *gin.Context) {
 
 			for _, einsatz := range einsaetze {
 				var count int64
-				services.DB.Model(&dtos.Lehrereinsatz{}).
+				services.DB.Model(&models.Lehrereinsatz{}).
 					Where("lehrer_id = ? AND schuljahr_id = ? AND kuerzel = ? AND schulnummer = ?",
 						einsatz.LehrerID, einsatz.SchuljahrID, einsatz.Kuerzel, req.Neu.Schulnummer).
 					Count(&count)
@@ -173,7 +173,7 @@ func PatchLehrerverwaltung(c *gin.Context) {
 					if err := services.DB.
 						Where("lehrer_id = ? AND schuljahr_id = ? AND kuerzel = ? AND schulnummer = ?",
 							einsatz.LehrerID, einsatz.SchuljahrID, einsatz.Kuerzel, einsatz.Schulnummer).
-						Delete(&dtos.Lehrereinsatz{}).Error; err != nil {
+						Delete(&models.Lehrereinsatz{}).Error; err != nil {
 						services.DB.
 							Rollback()
 						c.JSON(http.StatusInternalServerError, gin.H{"error": "Fehler beim Löschen alter Einsätze"})
@@ -185,7 +185,7 @@ func PatchLehrerverwaltung(c *gin.Context) {
 				if err := services.DB.
 					Where("lehrer_id = ? AND schuljahr_id = ? AND kuerzel = ? AND schulnummer = ?",
 						einsatz.LehrerID, einsatz.SchuljahrID, einsatz.Kuerzel, einsatz.Schulnummer).
-					Delete(&dtos.Lehrereinsatz{}).Error; err != nil {
+					Delete(&models.Lehrereinsatz{}).Error; err != nil {
 					services.DB.
 						Rollback()
 					c.JSON(http.StatusInternalServerError, gin.H{"error": "Fehler beim Löschen alter Einsätze"})
