@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"easyupz/dtos"
 	"easyupz/models"
 	"easyupz/services"
 	"github.com/gin-gonic/gin"
@@ -9,15 +10,24 @@ import (
 
 func GetAlleSchuljahre(c *gin.Context) {
 	var schuljahre []models.Schuljahr
+
 	services.DB.
+		Preload("Wochenfaktoren").
 		Find(&schuljahre)
-	c.JSON(http.StatusOK, schuljahre)
+
+	var dto []dtos.SchuljahrDTO
+	for _, sj := range schuljahre {
+		dto = append(dto, services.MappingSchuljahrToDTO(sj))
+	}
+
+	c.JSON(http.StatusOK, dto)
 }
 
 func GetAktivesSchuljahr(c *gin.Context) {
 	var schuljahr models.Schuljahr
 
 	result := services.DB.
+		Preload("Wochenfaktoren").
 		Where("aktiv = ?", true).
 		First(&schuljahr)
 
@@ -26,5 +36,6 @@ func GetAktivesSchuljahr(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, schuljahr)
+	dto := services.MappingSchuljahrToDTO(schuljahr)
+	c.JSON(http.StatusOK, dto)
 }

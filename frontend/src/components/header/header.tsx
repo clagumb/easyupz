@@ -5,12 +5,12 @@ import {NavLink} from "../types/NavLink.tsx";
 import {useAuth} from "../../services/auth-context.tsx";
 import {useSchuljahr} from "../../services/schuljahr-context.tsx";
 import {route} from "preact-router";
-import type {Schuljahr} from "../types/Schuljahr.ts";
+import type {SchuljahrDTO} from "../types/ArbeitszeitTypen.ts";
 
 export default function Header() {
     const [auth, setAuth] = useAuth();
     const {schuljahr, setSchuljahr} = useSchuljahr();
-    const [alleSchuljahre, setAlleSchuljahre] = useState<Schuljahr[]>([]);
+    const [alleSchuljahre, setAlleSchuljahre] = useState<SchuljahrDTO[]>([]);
 
     const handleLogout = async () => {
         await fetch("/logout", {method: "POST", credentials: "include"});
@@ -24,7 +24,7 @@ export default function Header() {
             .then((data) => {
                 setAlleSchuljahre(data);
                 if (!schuljahr && data.length > 0) {
-                    const aktiv = data.find((sj: Schuljahr) => sj.anzeigeform === schuljahr) || data[0];
+                    const aktiv = data.find((sj: SchuljahrDTO) => sj.anzeigeform === schuljahr) || data[0];
                     setSchuljahr(aktiv);
                 }
             })

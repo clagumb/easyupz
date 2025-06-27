@@ -9,7 +9,7 @@ type Benutzer = {
   kuerzel: "";
 };
 
-type Rolle = "" | "admin" | "schulleitung" | "lehrkraft";
+type Rolle = "" | "admin" | "schulleitung" | "lehrkraft" | "verwaltung";
 type Kuerzel = string | null;
 type NeuerBenutzer = {
   benutzer: string;
@@ -172,6 +172,7 @@ export default function Benutzer(_: Props) {
             <option value="admin">ADMIN</option>
             <option value="schulleitung">SCHULLEITUNG</option>
             <option value="lehrkraft">LEHRKRAFT</option>
+              <option value="verwaltung">VERWALTUNG</option>
           </select>
         </label>
         <label>

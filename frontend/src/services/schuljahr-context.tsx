@@ -1,16 +1,16 @@
 import { createContext } from "preact";
 import { useContext, useEffect, useState } from "preact/hooks";
-import type { Schuljahr } from "../components/types/Schuljahr.ts";
+import type { SchuljahrDTO } from "../components/types/ArbeitszeitTypen.ts";
 
 type SchuljahrContextType = {
-    schuljahr: Schuljahr | null;
-    setSchuljahr: (sj: Schuljahr) => void;
+    schuljahr: SchuljahrDTO | null;
+    setSchuljahr: (sj: SchuljahrDTO) => void;
 };
 
 const SchuljahrContext = createContext<SchuljahrContextType | null>(null);
 
 export function SchuljahrProvider({ children }: { children: preact.ComponentChildren }) {
-    const [schuljahr, setSchuljahr] = useState<Schuljahr | null>(null);
+    const [schuljahr, setSchuljahr] = useState<SchuljahrDTO | null>(null);
 
     useEffect(() => {
         fetch("/schuljahre/aktiv")
@@ -18,7 +18,7 @@ export function SchuljahrProvider({ children }: { children: preact.ComponentChil
                 if (!res.ok) throw new Error("Aktives Schuljahr konnte nicht geladen werden");
                 return res.json();
             })
-            .then((data: Schuljahr) => {
+            .then((data: SchuljahrDTO) => {
                 setSchuljahr(data);
                 console.log(data)
             })
