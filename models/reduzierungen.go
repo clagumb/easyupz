@@ -1,12 +1,11 @@
 package models
 
 type Reduzierung struct {
-	ID             uint    `gorm:"primaryKey" json:"reduzierung_id"`
-	LehrerID       uint    `gorm:"not null" json:"lehrer_id"`
-	SchuljahrID    uint    `gorm:"not null" json:"schuljahr_id"`
-	AnrechnungID   uint    `json:"anrechnung_id"`
-	ErmaessigungID uint    `json:"ermaessigung_id"`
-	Jahrestunden   float32 `gorm:"not null" json:"jahrestunden"`
+	ID             uint                 `gorm:"primaryKey"`
+	LehrerID       uint                 `gorm:"not null"`
+	Lehrer         Lehrer               `gorm:"foreignKey:LehrerID"`
+	Anrechnungen   []LehrerAnrechnung   `gorm:"foreignKey:ReduzierungID"`
+	Ermaessigungen []LehrerErmaessigung `gorm:"foreignKey:ReduzierungID"`
 }
 
 func (Reduzierung) TableName() string {

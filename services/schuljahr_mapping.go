@@ -17,10 +17,9 @@ func MappingSchuljahrToDTO(sj models.Schuljahr) dtos.SchuljahrDTO {
 		})
 	}
 	return dtos.SchuljahrDTO{
-		ID:              sj.ID,
-		Anzeigeform:     sj.Anzeigeform,
-		Aktiv:           sj.Aktiv,
-		SchultageGesamt: sj.SchultageGesamt,
-		Wochenfaktoren:  wfDTOs,
+		ID:             sj.ID,
+		Anzeigeform:    sj.Anzeigeform,
+		Aktiv:          sj.Aktiv,
+		Wochenfaktoren: wfDTOs,
 	}
 }

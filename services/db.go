@@ -28,13 +28,16 @@ func Init() {
 
 	if err := DB.AutoMigrate(&models.Lehrer{},
 		&models.Benutzer{},
-		&models.Anrechnung{},
 		&models.Schuljahr{},
 		&models.Lehrereinsatz{},
+		&models.Anrechnung{},
+		&models.LehrerAnrechnung{},
 		&models.Ermaessigung{},
+		&models.LehrerErmaessigung{},
 		&models.Upz{},
 		&models.Reduzierung{},
-		&models.Wochenfaktor{}); err != nil {
+		&models.Wochenfaktor{},
+		&models.Stundenmass{}); err != nil {
 		log.Fatalf("AutoMigrate fehlgeschlagen: %v", err)
 	}
 
