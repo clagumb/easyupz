@@ -75,24 +75,41 @@ export default function Lehrerverwaltung(_: Props) {
         const id = schuljahr?.schuljahr_id;
         if (!id) return;
 
-        fetch(`/lehrerverwaltung?schuljahr_id=${id}`)
-            .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
-            .then((data: Lehrer[]) => setLehrerListe(data))
-            .catch((err) => {
+        const loadLehrer = async () => {
+            try {
+                const res = await fetch(`/lehrerverwaltung?schuljahr_id=${id}`);
+                if (!res.ok) {
+                    const text = await res.text();
+                    throw new Error(text || `Fehler beim Laden (HTTP ${res.status})`);
+                }
+                const text = await res.text();
+                if (!text) {
+                    setLehrerListe([]);
+                    return;
+                }
+                const data: Lehrer[] = JSON.parse(text);
+                setLehrerListe(Array.isArray(data) ? data : []);
+            } catch (err: any) {
                 console.error("Fehler beim Laden der Lehrerliste:", err);
-                alert("Fehler beim Laden der Benutzerdaten.");
-            });
+                alert("Fehler beim Laden der Lehrerliste: " + err.message);
+            }
+        };
+
+        loadLehrer();
     }, [schuljahr]);
 
     function handleAdd() {
-        if (
-            !neuerLehrer.vorname ||
-            !neuerLehrer.nachname ||
-            !neuerLehrer.dienstverhaeltnis ||
-            !neuerLehrer.qualifikationsebene ||
-            !neuerLehrer.schulnummer ||
-            !neuerLehrer.kuerzel
-        ) {
+        console.log("Neuer Lehrer:", neuerLehrer);
+        const fehlt = [
+            neuerLehrer.vorname,
+            neuerLehrer.nachname,
+            neuerLehrer.dienstverhaeltnis,
+            neuerLehrer.qualifikationsebene,
+            neuerLehrer.schulnummer,
+            neuerLehrer.kuerzel,
+        ].some((feld) => !feld || feld.trim() === "");
+
+        if (fehlt) {
             alert("Bitte alle Felder ausfüllen.");
             return;
         }

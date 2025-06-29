@@ -74,6 +74,15 @@ func PostLehrerverwaltung(c *gin.Context) {
 			return err
 		}
 
+		reduzierung := models.Reduzierung{
+			LehrerID:    lehrer.ID,
+			SchuljahrID: req.Schuljahr.SchuljahrID,
+		}
+
+		if err := tx.Create(&reduzierung).Error; err != nil {
+			return err
+		}
+
 		c.JSON(http.StatusCreated, gin.H{
 			"lehrer":        lehrer,
 			"lehrereinsatz": lehrereinsatz,
@@ -120,20 +129,40 @@ func PatchLehrerverwaltung(c *gin.Context) {
 		return
 	}
 
-	if req.Alt.Kuerzel != req.Neu.Kuerzel {
-		result := services.DB.
+	kuerzelGeaendert := req.Alt.Kuerzel != req.Neu.Kuerzel
+	schulnummerGeaendert := req.Alt.Schulnummer != req.Neu.Schulnummer
+
+	if kuerzelGeaendert || schulnummerGeaendert {
+		tx := services.DB.Begin()
+
+		var count int64
+		tx.Model(&models.Lehrereinsatz{}).
+			Where("lehrer_id = ? AND schuljahr_id = ? AND schulnummer = ? AND kuerzel = ?",
+				lehrerId,
+				req.Neu.Schuljahr.SchuljahrID,
+				req.Neu.Schulnummer,
+				req.Neu.Kuerzel).
+			Count(&count)
+
+		if count > 0 {
+			tx.Rollback()
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Lehrerkürzel bereits vorhanden"})
+			return
+		}
+
+		if err := tx.
 			Where("lehrer_id = ? AND schuljahr_id = ? AND schulnummer = ? AND kuerzel = ?",
 				lehrerId,
 				req.Neu.Schuljahr.SchuljahrID,
 				req.Alt.Schulnummer,
 				req.Alt.Kuerzel).
-			Delete(&models.Lehrereinsatz{})
-
-		if result.Error != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Fehler beim Löschen des bestehenden Lehrereinsatzes"})
+			Delete(&models.Lehrereinsatz{}).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Fehler beim Löschen des alten Lehrereinsatzes"})
 			return
 		}
 
+		// Neuen Einsatz anlegen
 		neuerEinsatz := models.Lehrereinsatz{
 			LehrerID:    lehrerId,
 			SchuljahrID: req.Neu.Schuljahr.SchuljahrID,
@@ -141,67 +170,18 @@ func PatchLehrerverwaltung(c *gin.Context) {
 			Kuerzel:     req.Neu.Kuerzel,
 		}
 
-		if err := services.DB.Create(&neuerEinsatz).Error; err != nil {
+		if err := tx.Create(&neuerEinsatz).Error; err != nil {
+			tx.Rollback()
 			if strings.Contains(err.Error(), "UNIQUE constraint failed") {
-				c.JSON(http.StatusBadRequest, gin.H{"error": "Kürzel bereits vergeben!"})
-				return
-			} else {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Neuer Lehrereinsatz konnte nicht gespeichert werden"})
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Lehrerkürzel bereits vorhanden"})
 				return
 			}
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Neuer Lehrereinsatz konnte nicht gespeichert werden"})
+			return
 		}
 
-		if req.Alt.Schulnummer != req.Neu.Schulnummer {
-			var einsaetze []models.Lehrereinsatz
-
-			if err := services.DB.
-				Where("lehrer_id = ?", lehrerId).Find(&einsaetze).Error; err != nil {
-				services.DB.
-					Rollback()
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Lehrereinsätze konnten nicht geladen werden"})
-				return
-			}
-
-			for _, einsatz := range einsaetze {
-				var count int64
-				services.DB.Model(&models.Lehrereinsatz{}).
-					Where("lehrer_id = ? AND schuljahr_id = ? AND kuerzel = ? AND schulnummer = ?",
-						einsatz.LehrerID, einsatz.SchuljahrID, einsatz.Kuerzel, req.Neu.Schulnummer).
-					Count(&count)
-
-				if count > 0 {
-					if err := services.DB.
-						Where("lehrer_id = ? AND schuljahr_id = ? AND kuerzel = ? AND schulnummer = ?",
-							einsatz.LehrerID, einsatz.SchuljahrID, einsatz.Kuerzel, einsatz.Schulnummer).
-						Delete(&models.Lehrereinsatz{}).Error; err != nil {
-						services.DB.
-							Rollback()
-						c.JSON(http.StatusInternalServerError, gin.H{"error": "Fehler beim Löschen alter Einsätze"})
-						return
-					}
-					continue
-				}
-
-				if err := services.DB.
-					Where("lehrer_id = ? AND schuljahr_id = ? AND kuerzel = ? AND schulnummer = ?",
-						einsatz.LehrerID, einsatz.SchuljahrID, einsatz.Kuerzel, einsatz.Schulnummer).
-					Delete(&models.Lehrereinsatz{}).Error; err != nil {
-					services.DB.
-						Rollback()
-					c.JSON(http.StatusInternalServerError, gin.H{"error": "Fehler beim Löschen alter Einsätze"})
-					return
-				}
-
-				einsatz.Schulnummer = req.Neu.Schulnummer
-				if err := services.DB.
-					Create(&einsatz).Error; err != nil {
-					services.DB.
-						Rollback()
-					c.JSON(http.StatusInternalServerError, gin.H{"error": "Fehler beim Anlegen neuer Einsätze"})
-					return
-				}
-			}
-		}
-		c.JSON(http.StatusOK, gin.H{"message": "Lehrer erfolgreich aktualisiert"})
+		tx.Commit()
 	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Lehrer erfolgreich aktualisiert"})
 }
