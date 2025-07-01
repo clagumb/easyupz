@@ -3,22 +3,29 @@ import './gesamtansicht.css';
 import {useEffect, useState} from 'preact/hooks';
 import type {Props} from '../../../types/PathProps.ts';
 import {route} from "preact-router";
+import {useSchuljahr} from "../../../../services/schuljahr-context.tsx";
 
 type Lehrer = {
     lehrer_id: number;
     vorname: string;
     nachname: string;
+    soll_wochenstunden: number;
+    ist_wochenstunden: number;
 };
 
 export default function Gesamtansicht(_: Props) {
     const [lehrerListe, setLehrerListe] = useState<Lehrer[]>([]);
+    const {schuljahr} = useSchuljahr();
 
     useEffect(() => {
-        fetch('/gesamtansicht')
+        const id = schuljahr?.schuljahr_id;
+        if (!id) return;
+
+        fetch(`/gesamtansicht?schuljahr_id=${id}`)
             .then((res) => res.ok ? res.json() : Promise.reject(res.status))
             .then((data: Lehrer[]) => setLehrerListe(data))
             .catch((err) => console.error('Fehler beim Laden der Lehrerliste:', err));
-    }, []);
+    }, [schuljahr]);
 
     useEffect(() => {
         const savedY = sessionStorage.getItem("scrollY");
@@ -60,9 +67,11 @@ export default function Gesamtansicht(_: Props) {
                     >
                         <td>{lehrer.vorname}</td>
                         <td>{lehrer.nachname}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>{lehrer.soll_wochenstunden}</td>
+                        <td>{lehrer.ist_wochenstunden}</td>
+                        <td style={{ color: lehrer.ist_wochenstunden - lehrer.soll_wochenstunden < 0 ? 'red' : 'inherit' }}>
+                            {lehrer.ist_wochenstunden - lehrer.soll_wochenstunden}
+                        </td>
                     </tr>
                 ))}
                 </tbody>
