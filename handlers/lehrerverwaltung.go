@@ -4,6 +4,7 @@ import (
 	"easyupz/dtos"
 	"easyupz/models"
 	"easyupz/services"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
@@ -49,8 +50,14 @@ func PostLehrerverwaltung(c *gin.Context) {
 		return
 	}
 
+	var lehrer models.Lehrer
+	var lehrereinsatz models.Lehrereinsatz
+	var reduzierung models.Reduzierung
+	var wf models.Wochenfaktor
+	var upz models.Upz
+
 	err := services.DB.Transaction(func(tx *gorm.DB) error {
-		lehrer := models.Lehrer{
+		lehrer = models.Lehrer{
 			Vorname:           req.Vorname,
 			Nachname:          req.Nachname,
 			Geburtsdatum:      req.Geburtsdatum,
@@ -63,7 +70,7 @@ func PostLehrerverwaltung(c *gin.Context) {
 			return err
 		}
 
-		lehrereinsatz := models.Lehrereinsatz{
+		lehrereinsatz = models.Lehrereinsatz{
 			LehrerID:    lehrer.ID,
 			SchuljahrID: req.Schuljahr.SchuljahrID,
 			Kuerzel:     req.Kuerzel,
@@ -74,7 +81,7 @@ func PostLehrerverwaltung(c *gin.Context) {
 			return err
 		}
 
-		reduzierung := models.Reduzierung{
+		reduzierung = models.Reduzierung{
 			LehrerID:    lehrer.ID,
 			SchuljahrID: req.Schuljahr.SchuljahrID,
 		}
@@ -83,10 +90,42 @@ func PostLehrerverwaltung(c *gin.Context) {
 			return err
 		}
 
-		c.JSON(http.StatusCreated, gin.H{
-			"lehrer":        lehrer,
-			"lehrereinsatz": lehrereinsatz,
-		})
+		if err := tx.Where("schuljahr_id = ? AND bezeichnung = ?", req.Schuljahr.SchuljahrID, "Schuljahr").
+			First(&wf).Error; err != nil {
+			return fmt.Errorf("Wochenfaktor 'Schuljahr' nicht gefunden: %w", err)
+		}
+
+		stundenmass := models.Stundenmass{
+			LehrerID:       lehrer.ID,
+			WochenfaktorID: wf.ID,
+		}
+
+		switch lehrer.QE {
+		case "QE3":
+			stundenmass.Wochenstunden = 27.0
+		case "QE4":
+			stundenmass.Wochenstunden = 24.0
+		default:
+			stundenmass.Wochenstunden = 0.0
+		}
+
+		if err := tx.Create(&stundenmass).Error; err != nil {
+			return err
+		}
+
+		upz = models.Upz{
+			LehrerID:              lehrer.ID,
+			SchuljahrID:           req.Schuljahr.SchuljahrID,
+			StundenmassID:         stundenmass.ID,
+			ReduzierungID:         reduzierung.ID,
+			UebertragVorjahr:      0.0,
+			IstUnterrichtsstunden: stundenmass.Wochenstunden * float64(wf.Schultage/5),
+		}
+
+		if err := tx.Create(&upz).Error; err != nil {
+			return err
+		}
+
 		return nil
 	})
 
@@ -96,7 +135,16 @@ func PostLehrerverwaltung(c *gin.Context) {
 		} else {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Fehler beim Speichern"})
 		}
+		return
 	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"lehrer":        lehrer,
+		"lehrereinsatz": lehrereinsatz,
+		"reduzierung":   reduzierung,
+		"wochenfaktor":  wf,
+		"upz":           upz,
+	})
 }
 
 func PatchLehrerverwaltung(c *gin.Context) {

@@ -28,8 +28,7 @@ func GetGesamtansicht(c *gin.Context) {
 		Joins(`
 		JOIN upz 
 		ON upz.lehrer_id = lehrer.id 
-		AND upz.schuljahr_id = ?
-	`, schuljahrID).
+		AND upz.schuljahr_id = ?`, schuljahrID).
 		Joins(`
 		JOIN wochenfaktoren 
 		ON wochenfaktoren.schuljahr_id = upz.schuljahr_id 
