@@ -52,9 +52,6 @@ func PostLehrerverwaltung(c *gin.Context) {
 
 	var lehrer models.Lehrer
 	var lehrereinsatz models.Lehrereinsatz
-	var reduzierung models.Reduzierung
-	var wf models.Wochenfaktor
-	var upz models.Upz
 
 	err := services.DB.Transaction(func(tx *gorm.DB) error {
 		lehrer = models.Lehrer{
@@ -81,7 +78,7 @@ func PostLehrerverwaltung(c *gin.Context) {
 			return err
 		}
 
-		reduzierung = models.Reduzierung{
+		reduzierung := models.Reduzierung{
 			LehrerID:    lehrer.ID,
 			SchuljahrID: req.Schuljahr.SchuljahrID,
 		}
@@ -90,6 +87,7 @@ func PostLehrerverwaltung(c *gin.Context) {
 			return err
 		}
 
+		var wf models.Wochenfaktor
 		if err := tx.Where("schuljahr_id = ? AND bezeichnung = ?", req.Schuljahr.SchuljahrID, "Schuljahr").
 			First(&wf).Error; err != nil {
 			return fmt.Errorf("Wochenfaktor 'Schuljahr' nicht gefunden: %w", err)
@@ -113,7 +111,7 @@ func PostLehrerverwaltung(c *gin.Context) {
 			return err
 		}
 
-		upz = models.Upz{
+		upz := models.Upz{
 			LehrerID:              lehrer.ID,
 			SchuljahrID:           req.Schuljahr.SchuljahrID,
 			StundenmassID:         stundenmass.ID,
@@ -141,9 +139,6 @@ func PostLehrerverwaltung(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{
 		"lehrer":        lehrer,
 		"lehrereinsatz": lehrereinsatz,
-		"reduzierung":   reduzierung,
-		"wochenfaktor":  wf,
-		"upz":           upz,
 	})
 }
 
@@ -210,7 +205,6 @@ func PatchLehrerverwaltung(c *gin.Context) {
 			return
 		}
 
-		// Neuen Einsatz anlegen
 		neuerEinsatz := models.Lehrereinsatz{
 			LehrerID:    lehrerId,
 			SchuljahrID: req.Neu.Schuljahr.SchuljahrID,
