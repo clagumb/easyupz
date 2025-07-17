@@ -205,20 +205,70 @@ func PatchLehrerverwaltung(c *gin.Context) {
 			return
 		}
 
-		neuerEinsatz := models.Lehrereinsatz{
+		lehrereinsatz := models.Lehrereinsatz{
 			LehrerID:    lehrerId,
 			SchuljahrID: req.Neu.Schuljahr.SchuljahrID,
 			Schulnummer: req.Neu.Schulnummer,
 			Kuerzel:     req.Neu.Kuerzel,
 		}
 
-		if err := tx.Create(&neuerEinsatz).Error; err != nil {
+		if err := tx.Create(&lehrereinsatz).Error; err != nil {
 			tx.Rollback()
 			if strings.Contains(err.Error(), "UNIQUE constraint failed") {
 				c.JSON(http.StatusBadRequest, gin.H{"error": "Lehrerkürzel bereits vorhanden"})
 				return
 			}
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Neuer Lehrereinsatz konnte nicht gespeichert werden"})
+			return
+		}
+
+		reduzierung := models.Reduzierung{
+			LehrerID:    lehrereinsatz.LehrerID,
+			SchuljahrID: lehrereinsatz.SchuljahrID,
+		}
+
+		if err := tx.Create(&reduzierung).Error; err != nil {
+			tx.Rollback()
+			return
+		}
+
+		var wf models.Wochenfaktor
+		if err := tx.Where("schuljahr_id = ? AND bezeichnung = ?", lehrereinsatz.SchuljahrID, "Schuljahr").
+			First(&wf).Error; err != nil {
+			tx.Rollback()
+			return
+		}
+
+		stundenmass := models.Stundenmass{
+			LehrerID:       lehrereinsatz.LehrerID,
+			WochenfaktorID: wf.ID,
+		}
+
+		switch update["qe"].(string) {
+		case "QE3":
+			stundenmass.Wochenstunden = 27.0
+		case "QE4":
+			stundenmass.Wochenstunden = 24.0
+		default:
+			stundenmass.Wochenstunden = 0.0
+		}
+
+		if err := tx.Create(&stundenmass).Error; err != nil {
+			tx.Rollback()
+			return
+		}
+
+		upz := models.Upz{
+			LehrerID:              lehrereinsatz.LehrerID,
+			SchuljahrID:           lehrereinsatz.SchuljahrID,
+			StundenmassID:         stundenmass.ID,
+			ReduzierungID:         reduzierung.ID,
+			UebertragVorjahr:      0.0,
+			IstUnterrichtsstunden: stundenmass.Wochenstunden * float64(wf.Schultage/5),
+		}
+
+		if err := tx.Create(&upz).Error; err != nil {
+			tx.Rollback()
 			return
 		}
 
