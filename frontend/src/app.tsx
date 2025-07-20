@@ -12,6 +12,8 @@ import Benutzer from './components/home/pages/benutzer/benutzer';
 import Lehrerverwaltung from './components/home/pages/lehrerverwaltung/lehrerverwaltung';
 import Login from './components/home/pages/login/login';
 import Einzelansicht from "./components/home/pages/einzelansicht/einzelansicht.tsx";
+import Anrechnungen from "./components/home/pages/reduzierung/anrechnungen.tsx";
+import Ermaessigungen from "./components/home/pages/reduzierung/ermaessigungen.tsx";
 
 export function App() {
   return (
@@ -28,6 +30,8 @@ export function App() {
                 <Benutzer path="/benutzer" />
                 <Lehrerverwaltung path="/lehrerverwaltung" />
                 <Einzelansicht path="/einzelansicht/:id" />
+                <Anrechnungen path="/anrechnungen" />
+                <Ermaessigungen path="/ermaessigungen" />
               </Router>
             </main>
             <Footer />

@@ -12,9 +12,9 @@ import (
 )
 
 func GetErmaessigung(c *gin.Context) {
-	var anrechnungen []models.Anrechnung
-	services.DB.Find(&anrechnungen)
-	c.JSON(http.StatusOK, anrechnungen)
+	var ermaessigungen []models.Ermaessigung
+	services.DB.Find(&ermaessigungen)
+	c.JSON(http.StatusOK, ermaessigungen)
 }
 
 func PostErmaessigung(c *gin.Context) {

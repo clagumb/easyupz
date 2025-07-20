@@ -1,0 +1,80 @@
+/* Reduzierungen: Einheitliches Tabellen-Layout für Anrechnungen, Ermäßigungen etc. */
+
+.reduzierung-tabelle {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-family: sans-serif;
+    font-size: 0.95rem;
+    background-color: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.reduzierung-tabelle thead {
+    background-color: #f4f6f8;
+    text-align: left;
+}
+
+.reduzierung-tabelle th,
+.reduzierung-tabelle td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.reduzierung-tabelle th {
+    font-weight: 600;
+    color: #374151;
+}
+
+.reduzierung-tabelle tbody tr:nth-of-type(even) {
+    background-color: #f9fafb;
+}
+
+.reduzierung-tabelle tbody tr:hover {
+    background-color: #eef2f7;
+}
+
+.reduzierung-tabelle td {
+    color: #4b5563;
+    white-space: nowrap;
+}
+
+/* Responsives Verhalten */
+@media (max-width: 600px) {
+    .reduzierung-tabelle,
+    .reduzierung-tabelle thead,
+    .reduzierung-tabelle tbody,
+    .reduzierung-tabelle th,
+    .reduzierung-tabelle td,
+    .reduzierung-tabelle tr {
+        display: block;
+        width: 100%;
+    }
+
+    .reduzierung-tabelle thead {
+        display: none;
+    }
+
+    .reduzierung-tabelle tr {
+        margin-bottom: 1rem;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 0.5rem;
+    }
+
+    .reduzierung-tabelle td {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem;
+        border-bottom: none;
+    }
+
+    .reduzierung-tabelle td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #6b7280;
+    }
+}
