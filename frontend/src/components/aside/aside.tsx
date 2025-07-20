@@ -14,6 +14,8 @@ export default function Aside() {
                     <p className={"big-spacer"}>Administration</p>
                     <NavLink href="/lehrerverwaltung" className={"button-link"}>Lehrerverwaltung</NavLink>
                     <NavLink href="/benutzer" className={"button-link"}>Benutzerverwaltung</NavLink>
+                    <NavLink href="/anrechnungen" className={"button-link"}>Anrechnungen</NavLink>
+                    <NavLink href={"/ermaessigungen"} className={"button-link"}>Ermäßigungen</NavLink>
                 </aside>
             );
 
