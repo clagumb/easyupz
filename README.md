@@ -1,7 +1,7 @@
 Anwendung zur Verwaltung der Unterrichtspflichtzeiten (und mehr) für Lehrkräfte an Berufsschulen in Bayern
 
-<img width="1366" height="637" alt="easyupz_Gesamtansicht" src="https://github.com/user-attachments/assets/ab865e2f-6098-4cf7-ba22-1953ae49e8dd" />
+<img width="1366" height="638" alt="easyupz_Gesamtansicht" src="https://github.com/user-attachments/assets/d0f0d717-7519-45f3-824f-84f688eef5e1" />
 
-![easyupz_Lehrerverwaltung](https://github.com/user-attachments/assets/dcf02885-24ba-4b28-863b-9fe37006e141)
+<img width="1366" height="637" alt="easyupz_Lehrerverwaltung" src="https://github.com/user-attachments/assets/b8a2d981-25ee-4d88-b00b-5683e083a318" />
 
-![easyupz_Benutzerverwaltung](https://github.com/user-attachments/assets/a25d009b-a888-432f-a41c-bdf959937fc2)
+<img width="1366" height="638" alt="easyupz_Benutzerverwaltung" src="https://github.com/user-attachments/assets/bb183804-44a7-4307-ab1e-8b013bc5529d" />
