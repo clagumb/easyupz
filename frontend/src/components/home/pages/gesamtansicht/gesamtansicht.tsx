@@ -70,7 +70,7 @@ export default function Gesamtansicht(_: Props) {
                         <td>{lehrer.soll_wochenstunden}</td>
                         <td>{lehrer.ist_wochenstunden}</td>
                         <td style={{ color: lehrer.ist_wochenstunden - lehrer.soll_wochenstunden < 0 ? 'red' : 'inherit' }}>
-                            {lehrer.ist_wochenstunden - lehrer.soll_wochenstunden}
+                            {Math.trunc((lehrer.ist_wochenstunden - lehrer.soll_wochenstunden) * 1000) / 1000}
                         </td>
                     </tr>
                 ))}
