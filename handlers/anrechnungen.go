@@ -9,6 +9,7 @@ import (
 	"gorm.io/gorm"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 func GetAnrechnug(c *gin.Context) {
@@ -18,14 +19,21 @@ func GetAnrechnug(c *gin.Context) {
 }
 
 func PostAnrechnung(c *gin.Context) {
-	var neuer models.Anrechnung
-	if err := c.BindJSON(&neuer); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	var neueAnrechnung models.Anrechnung
+	if err := c.ShouldBindJSON(&neueAnrechnung); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Ungültiges JSON: " + err.Error()})
 		return
 	}
-	fmt.Println(&neuer.Kurzform)
-	services.DB.Create(&neuer)
-	c.JSON(http.StatusCreated, neuer)
+	if err := services.DB.Create(&neueAnrechnung).Error; err != nil {
+		// UNIQUE-Constraint-Fehler erkennen
+		if strings.Contains(err.Error(), "UNIQUE") || strings.Contains(err.Error(), "duplicate") {
+			c.JSON(http.StatusConflict, gin.H{"error": "Eine Anrechnung mit diesem Kürzel existiert bereits."})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Fehler beim Speichern: " + err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, neueAnrechnung)
 }
 
 func DeleteAnrechnung(c *gin.Context) {
@@ -35,6 +43,22 @@ func DeleteAnrechnung(c *gin.Context) {
 		return
 	}
 	id := uint(castInt)
+
+	var count int64
+	err = services.DB.
+		Model(&models.LehrerAnrechnung{}).
+		Where("anrechnung_id = ?", id).
+		Count(&count).Error
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Verwendungsprüfung fehlgeschlagen: " + err.Error()})
+		return
+	}
+	if count > 0 {
+		c.JSON(http.StatusConflict, gin.H{
+			"error": fmt.Sprintf("Diese Anrechnung ist in %d Einträgen der Lehrkraft-Zuordnung verwendet und kann nicht gelöscht werden.", count),
+		})
+		return
+	}
 
 	var zuLoeschen models.Anrechnung
 	result := services.DB.First(&zuLoeschen, id)
@@ -53,4 +77,29 @@ func DeleteAnrechnung(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+func PatchAnrechnung(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var payload struct {
+		Anzeigeform string `json:"anzeigeform"`
+	}
+	if err := c.ShouldBindJSON(&payload); err != nil || strings.TrimSpace(payload.Anzeigeform) == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Ungültige Eingabe"})
+		return
+	}
+
+	var a models.Anrechnung
+	if err := services.DB.First(&a, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Anrechnung nicht gefunden"})
+		return
+	}
+
+	a.Anzeigeform = payload.Anzeigeform
+	if err := services.DB.Save(&a).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Speichern fehlgeschlagen"})
+		return
+	}
+
+	c.JSON(http.StatusOK, a)
 }

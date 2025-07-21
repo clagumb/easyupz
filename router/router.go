@@ -55,10 +55,12 @@ func Setup(staticFiles embed.FS, indexHtml []byte) *gin.Engine {
 	r.GET("/anrechnung", handlers.GetAnrechnug)
 	r.POST("/anrechnung", handlers.PostAnrechnung)
 	r.DELETE("/anrechnung/:id", handlers.DeleteAnrechnung)
+	r.PATCH("/anrechnung/:id", handlers.PatchAnrechnung)
 
 	r.GET("/ermaessigung", handlers.GetErmaessigung)
 	r.POST("/ermaessigung", handlers.PostErmaessigung)
-	r.DELETE("/ermaessigung/:id", handlers.DeleteEmaessigung)
+	r.DELETE("/ermaessigung/:id", handlers.DeleteErmaessigung)
+	r.PATCH("/ermaessigung/:id", handlers.PatchErmaessigung)
 
 	r.GET("/benutzer", handlers.GetBenutzer)
 	r.POST("/benutzer", handlers.PostBenutzer)
