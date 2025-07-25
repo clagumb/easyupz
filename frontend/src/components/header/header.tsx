@@ -19,7 +19,7 @@ export default function Header() {
     };
 
     useEffect(() => {
-        fetch("/schuljahre")
+        fetch("/schuljahre", {method: "GET", credentials: "include" })
             .then((res) => res.json())
             .then((data) => {
                 setAlleSchuljahre(data);
