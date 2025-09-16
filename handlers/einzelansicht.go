@@ -26,7 +26,7 @@ func GetEinzelansicht(c *gin.Context) {
 	var data dtos.Einzelansicht
 	err = services.DB.
 		Table("lehrer").
-		Select("lehrer.vorname, lehrer.nachname, lehrereinsatz.kuerzel").
+		Select("lehrer.id, lehrer.vorname, lehrer.nachname, lehrereinsatz.kuerzel").
 		Joins("LEFT JOIN lehrereinsatz ON lehrereinsatz.lehrer_id = lehrer.id AND lehrereinsatz.schuljahr_id = ?", schuljahrId).
 		Where("lehrer.id = ?", lehrerId).
 		Scan(&data).Error

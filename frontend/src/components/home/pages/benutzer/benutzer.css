@@ -78,10 +78,6 @@
   margin-bottom: 5px;
 }
 
-.back-button:hover {
-  transform: scale(1.2);
-}
-
 /* Responsives Verhalten */
 @media (max-width: 600px) {
   #benutzer-tabelle,
