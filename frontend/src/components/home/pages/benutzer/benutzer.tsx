@@ -1,6 +1,7 @@
-import "./benutzer.css";
 import type { Props } from "../../../types/PathProps.ts";
 import { useEffect, useState } from "preact/hooks";
+
+import "./benutzer.css";
 
 type Benutzer = {
   benutzer_id: number;

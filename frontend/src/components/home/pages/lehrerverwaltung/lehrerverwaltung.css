@@ -79,10 +79,6 @@
   margin-bottom: 5px;
 }
 
-.back-button:hover {
-  transform: scale(1.2);
-}
-
 .fussnote {
   font-size: 0.6rem;
 }

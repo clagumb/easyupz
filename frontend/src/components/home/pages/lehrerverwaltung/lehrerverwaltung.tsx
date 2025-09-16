@@ -1,8 +1,9 @@
-import "./lehrerverwaltung.css";
 import type {Props} from "../../../types/PathProps.ts";
 import {useEffect, useState} from "preact/hooks";
 import dayjs from "dayjs";
 import {useSchuljahr} from "../../../../services/schuljahr-context.tsx";
+
+import "./lehrerverwaltung.css";
 
 type Lehrer = {
     lehrer_id: number;

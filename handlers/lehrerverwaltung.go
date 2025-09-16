@@ -117,7 +117,7 @@ func PostLehrerverwaltung(c *gin.Context) {
 			StundenmassID:         stundenmass.ID,
 			ReduzierungID:         reduzierung.ID,
 			UebertragVorjahr:      0.0,
-			IstUnterrichtsstunden: stundenmass.Wochenstunden * float64(wf.Schultage/5),
+			IstUnterrichtsstunden: 0.0,
 		}
 
 		if err := tx.Create(&upz).Error; err != nil {
