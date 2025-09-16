@@ -1,29 +1,9 @@
 import { useEffect, useState } from "preact/hooks";
 import { route } from "preact-router";
-import {
-    Chart as ChartJS,
-    BarElement,
-    CategoryScale,
-    LinearScale,
-    LineElement,
-    PointElement,
-    Legend,
-    Tooltip,
-} from 'chart.js';
+
 import { Chart } from 'react-chartjs-2';
 import type { ChartData } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-
-ChartJS.register(
-    BarElement,
-    CategoryScale,
-    LinearScale,
-    LineElement,
-    PointElement,
-    Legend,
-    Tooltip,
-    ChartDataLabels
-);
 
 import "./einzelansicht.css";
 import type {Props} from "../../../types/PathProps.ts";
@@ -100,6 +80,7 @@ function ArbeitszeitChart({ komponenten }: { komponenten: ArbeitszeitKomponenten
     const options = {
         indexAxis: 'y' as const,
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             datalabels: {
                 color: 'black',
@@ -125,13 +106,9 @@ function ArbeitszeitChart({ komponenten }: { komponenten: ArbeitszeitKomponenten
     };
 
     return (
-        <Chart
-            type="bar"
-            data={data}
-            options={options}
-            plugins={[ChartDataLabels]}
-            height={40}
-        />
+        <div style="height: 320px; width: 100%;">
+            <Chart type="bar" data={data} options={options} plugins={[ChartDataLabels]} />
+        </div>
     );
 }
 
