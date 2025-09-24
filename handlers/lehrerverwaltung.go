@@ -5,11 +5,12 @@ import (
 	"easyupz/models"
 	"easyupz/services"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func GetLehrerverwaltung(c *gin.Context) {
@@ -21,7 +22,6 @@ func GetLehrerverwaltung(c *gin.Context) {
 
 	var lehrer []dtos.LehrerMitKuerzel
 
-	services.DB = services.DB.Debug()
 	err = services.DB.
 		Table("lehrer").
 		Select(`lehrer.id AS lehrer_id, vorname, nachname, geburtsdatum, 

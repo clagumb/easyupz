@@ -7,6 +7,7 @@ import (
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var DB *gorm.DB
@@ -19,12 +20,14 @@ func Init() {
 		panic("Fehler beim Öffnen der Config-Datei: " + err.Error())
 	}
 
-	DB, err = gorm.Open(sqlite.Open(loader.GetValue("database", "path")), &gorm.Config{})
+	dsn := loader.GetValue("database", "path") + "?_foreign_keys=on"
+
+	DB, err = gorm.Open(sqlite.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 	if err != nil {
 		panic("Fehler beim Öffnen der Datenbank: " + err.Error())
 	}
-
-	DB.Exec(`PRAGMA foreign_keys = ON;`)
 
 	if err := DB.AutoMigrate(&models.Lehrer{},
 		&models.Benutzer{},
