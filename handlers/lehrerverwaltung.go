@@ -78,15 +78,6 @@ func PostLehrerverwaltung(c *gin.Context) {
 			return err
 		}
 
-		reduzierung := models.Reduzierung{
-			LehrerID:    lehrer.ID,
-			SchuljahrID: req.Schuljahr.SchuljahrID,
-		}
-
-		if err := tx.Create(&reduzierung).Error; err != nil {
-			return err
-		}
-
 		var wf models.Wochenfaktor
 		if err := tx.Where("schuljahr_id = ? AND bezeichnung = ?", req.Schuljahr.SchuljahrID, "Schuljahr").
 			First(&wf).Error; err != nil {
@@ -114,8 +105,8 @@ func PostLehrerverwaltung(c *gin.Context) {
 		upz := models.Upz{
 			LehrerID:              lehrer.ID,
 			SchuljahrID:           req.Schuljahr.SchuljahrID,
+			LehrereinsatzID:       lehrereinsatz.ID,
 			StundenmassID:         stundenmass.ID,
-			ReduzierungID:         reduzierung.ID,
 			UebertragVorjahr:      0.0,
 			IstUnterrichtsstunden: 0.0,
 		}
@@ -222,16 +213,6 @@ func PatchLehrerverwaltung(c *gin.Context) {
 			return
 		}
 
-		reduzierung := models.Reduzierung{
-			LehrerID:    lehrereinsatz.LehrerID,
-			SchuljahrID: lehrereinsatz.SchuljahrID,
-		}
-
-		if err := tx.Create(&reduzierung).Error; err != nil {
-			tx.Rollback()
-			return
-		}
-
 		var wf models.Wochenfaktor
 		if err := tx.Where("schuljahr_id = ? AND bezeichnung = ?", lehrereinsatz.SchuljahrID, "Schuljahr").
 			First(&wf).Error; err != nil {
@@ -261,8 +242,8 @@ func PatchLehrerverwaltung(c *gin.Context) {
 		upz := models.Upz{
 			LehrerID:              lehrereinsatz.LehrerID,
 			SchuljahrID:           lehrereinsatz.SchuljahrID,
+			LehrereinsatzID:       lehrereinsatz.ID,
 			StundenmassID:         stundenmass.ID,
-			ReduzierungID:         reduzierung.ID,
 			UebertragVorjahr:      0.0,
 			IstUnterrichtsstunden: stundenmass.Wochenstunden * float64(wf.Schultage/5),
 		}

@@ -45,16 +45,18 @@ func GetGesamtansicht(c *gin.Context) {
 			AND stundenmass.wochenfaktor_id = wochenfaktoren.id`).
 		Joins(`
 		LEFT JOIN (
-			SELECT reduzierung_id, SUM(wochenstunden) AS summe
-			FROM lehrer_anrechnungen
-			GROUP BY reduzierung_id
-		) AS anrechnung ON anrechnung.reduzierung_id = upz.reduzierung_id`).
+			SELECT la.upz_id, SUM(la.wochenstunden) AS summe
+			FROM lehrer_anrechnungen la
+			JOIN wochenfaktoren wf ON wf.id = la.wochenfaktor_id AND wf.bezeichnung = 'Schuljahr'
+			GROUP BY la.upz_id
+		) AS anrechnung ON anrechnung.upz_id = upz.id`).
 		Joins(`
 		LEFT JOIN (
-			SELECT reduzierung_id, SUM(wochenstunden) AS summe
-			FROM lehrer_ermaessigungen
-			GROUP BY reduzierung_id
-		) AS ermaessigung ON ermaessigung.reduzierung_id = upz.reduzierung_id`).
+			SELECT le.upz_id, SUM(le.wochenstunden) AS summe
+			FROM lehrer_ermaessigungen le
+			JOIN wochenfaktoren wf ON wf.id = le.wochenfaktor_id AND wf.bezeichnung = 'Schuljahr'
+			GROUP BY le.upz_id
+		) AS ermaessigung ON ermaessigung.upz_id = upz.id`).
 		Order("lehrer.nachname, lehrer.vorname").
 		Scan(&daten).Error
 

@@ -7,6 +7,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 import "./einzelansicht.css";
 import type {Props} from "../../../types/PathProps.ts";
+import { useSchuljahr } from "../../../../services/schuljahr-context.tsx";
 
 // -----------------------------
 // Typdefinitionen
@@ -16,6 +17,8 @@ type ArbeitszeitKomponenten = {
     anrechnungen: number;
     ermaessigungen: number;
     uebertrag_vorjahr: number;
+    soll: number;
+    ist: number;
 };
 
 type Lehrer = {
@@ -24,22 +27,6 @@ type Lehrer = {
     nachname: string;
     kuerzel: string;
     arbeitszeit: ArbeitszeitKomponenten;
-};
-
-// -----------------------------
-// Testdaten statt fetch
-// -----------------------------
-const TEST_LEHRER: Lehrer = {
-    id: 1,
-    vorname: "Max",
-    nachname: "Mustermann",
-    kuerzel: "MM",
-    arbeitszeit: {
-        wochenstunden: 24,
-        anrechnungen: 2,
-        ermaessigungen: 3,
-        uebertrag_vorjahr: 0.56,
-    }
 };
 
 function ArbeitszeitChart({ komponenten }: { komponenten: ArbeitszeitKomponenten }) {
@@ -115,14 +102,29 @@ function ArbeitszeitChart({ komponenten }: { komponenten: ArbeitszeitKomponenten
 // -----------------------------
 // Hauptkomponente
 // -----------------------------
-export default function Einzelansicht(_: Props) {
+export default function Einzelansicht(props: Props) {
     const [lehrer, setLehrer] = useState<Lehrer | null>(null);
+    const [fehler, setFehler] = useState<string | null>(null);
+    const { schuljahr } = useSchuljahr();
+
+    const lehrerId = (props as any).id;
 
     useEffect(() => {
-        // Testdaten setzen (statt fetch)
-        setLehrer(TEST_LEHRER);
-    }, []);
+        if (!lehrerId || !schuljahr?.schuljahr_id) return;
 
+        fetch(`/einzelansicht/${lehrerId}?schuljahr_id=${schuljahr.schuljahr_id}`)
+            .then(async (res) => {
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({ error: "Unbekannter Fehler" }));
+                    throw new Error(err.error || `HTTP ${res.status}`);
+                }
+                return res.json() as Promise<Lehrer>;
+            })
+            .then((data) => setLehrer(data))
+            .catch((err) => setFehler(err.message));
+    }, [lehrerId, schuljahr]);
+
+    if (fehler) return <p>Fehler: {fehler}</p>;
     if (!lehrer) return <p>Lade Lehrer...</p>;
 
     return (
@@ -132,12 +134,16 @@ export default function Einzelansicht(_: Props) {
             <p><strong>Nachname:</strong> {lehrer.nachname}</p>
             <p><strong>Kürzel&#9733;:</strong> {lehrer.kuerzel || "Kein Kürzel vorhanden!"}</p>
 
-            {lehrer.arbeitszeit &&
+            {lehrer.arbeitszeit && (
                 <>
                     <h3>Arbeitszeitdiagramm</h3>
                     <ArbeitszeitChart komponenten={lehrer.arbeitszeit} />
+                    <p>
+                        <strong>SOLL:</strong> {lehrer.arbeitszeit.soll.toFixed(2)} Wochenstunden &nbsp;|&nbsp;
+                        <strong>IST:</strong> {lehrer.arbeitszeit.ist.toFixed(2)} Wochenstunden
+                    </p>
                 </>
-            }
+            )}
 
             <button
                 onClick={() => route('/gesamtansicht')}

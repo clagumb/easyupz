@@ -8,11 +8,14 @@ type Upz struct {
 	SchuljahrID uint      `gorm:"not null;index:idx_upz_lehrer_schuljahr,unique" json:"schuljahr_id"`
 	Schuljahr   Schuljahr `gorm:"foreignKey:SchuljahrID"`
 
+	LehrereinsatzID uint          `gorm:"not null" json:"lehrereinsatz_id"`
+	Lehrereinsatz   Lehrereinsatz `gorm:"foreignKey:LehrereinsatzID"`
+
 	StundenmassID uint        `gorm:"not null" json:"stundenmass_id"`
 	Stundenmass   Stundenmass `gorm:"foreignKey:StundenmassID"`
 
-	ReduzierungID uint        `gorm:"not null" json:"reduzierung_id"`
-	Reduzierung   Reduzierung `gorm:"foreignKey:ReduzierungID"`
+	Anrechnungen   []LehrerAnrechnung   `gorm:"foreignKey:UpzID"`
+	Ermaessigungen []LehrerErmaessigung `gorm:"foreignKey:UpzID"`
 
 	UebertragVorjahr      float64 `gorm:"not null;default:0" json:"uebertrag_vorjahr"`
 	IstUnterrichtsstunden float64 `gorm:"not null;default:0" json:"ist_unterrichtsstunden"`

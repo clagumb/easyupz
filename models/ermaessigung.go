@@ -12,12 +12,12 @@ func (Ermaessigung) TableName() string {
 
 type LehrerErmaessigung struct {
 	ID             uint         `gorm:"primaryKey"`
-	ReduzierungID  uint         `gorm:"not null"`
-	ErmaessigungID uint         `gorm:"not null"`
+	UpzID          uint         `gorm:"not null;index" json:"upz_id"`
+	ErmaessigungID uint         `gorm:"not null" json:"ermaessigung_id"`
 	Ermaessigung   Ermaessigung `gorm:"foreignKey:ErmaessigungID"`
-	WochenfaktorID uint         `gorm:"not null"`
+	WochenfaktorID uint         `gorm:"not null" json:"wochenfaktor_id"`
 	Wochenfaktor   Wochenfaktor `gorm:"foreignKey:WochenfaktorID"`
-	Wochenstunden  float64      `gorm:"not null"`
+	Wochenstunden  float64      `gorm:"not null" json:"wochenstunden"`
 }
 
 func (LehrerErmaessigung) TableName() string {

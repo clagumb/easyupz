@@ -12,12 +12,12 @@ func (Anrechnung) TableName() string {
 
 type LehrerAnrechnung struct {
 	ID             uint         `gorm:"primaryKey"`
-	ReduzierungID  uint         `gorm:"not null"`
-	AnrechnungID   uint         `gorm:"not null"`
+	UpzID          uint         `gorm:"not null;index" json:"upz_id"`
+	AnrechnungID   uint         `gorm:"not null" json:"anrechnung_id"`
 	Anrechnung     Anrechnung   `gorm:"foreignKey:AnrechnungID"`
-	WochenfaktorID uint         `gorm:"not null"`
+	WochenfaktorID uint         `gorm:"not null" json:"wochenfaktor_id"`
 	Wochenfaktor   Wochenfaktor `gorm:"foreignKey:WochenfaktorID"`
-	Wochenstunden  float64      `gorm:"not null"`
+	Wochenstunden  float64      `gorm:"not null" json:"wochenstunden"`
 }
 
 func (LehrerAnrechnung) TableName() string {
